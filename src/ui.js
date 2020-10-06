@@ -1,6 +1,15 @@
 // Import React library for creating components
 import React from 'react';
 
+// Import our TODO API thingy
+import {Item, Project} from "./todo";
+
+//==== TEST STUFF ====//
+var proj1 = new Project ("Proj1", 111);
+var proj2 = new Project ("project 2", 222);
+//====================//
+
+
 // Renders the web app (back to root node)
 function App() {
    return (
@@ -36,17 +45,23 @@ class AppContent extends React.Component {
 
    constructor (props) {
       super (props);
-      this.state = {view: "main_view"};
+      this.enterProject = this.enterProject.bind (this);
+      this.state = {view: "main_view", project: null};
+   }
+
+   enterProject (targetProject) {
+      this.setState ({view: "project_view"});
+      this.setState ({project: targetProject});
    }
 
    render() {
       return (
          <div className="app-content">
             {this.state.view === "main_view" &&
-               <MainView />
+               <MainView projectClick={this.enterProject}/>
             }
             {this.state.view === "project_view" &&
-               <ProjectView />
+               <ProjectView project={this.state.project} />
             }
          </div>
       );
@@ -80,8 +95,8 @@ class MainView extends React.Component {
       return (
          <>
             <h2>Projects | + | All items</h2>
-            <ProjectCard projectName="Project 1" />
-            <ProjectCard projectName="Project 2" />
+            <ProjectCard project={proj1} projectClick={this.props.projectClick} />
+            <ProjectCard project={proj2} projectClick={this.props.projectClick} />
          </>
       );
    }
@@ -97,7 +112,7 @@ class ProjectView extends React.Component {
    render() {
       return (
          <>
-            <h2>Project 1</h2>
+            <h2>{this.props.project.getTitle()}</h2>
             <ItemCard />
             <ItemCard />
          </>
@@ -108,15 +123,24 @@ class ProjectView extends React.Component {
 // Shows project title, options when hovered
 class ProjectCard extends React.Component {
    /* TODO
-      - Use props to determine what project to show
       - Add onclick() to enter this project's view
       - Add options when hovering
       - Finalize CSS
    */
 
+   constructor (props) {
+      super (props);
+      this.click = this.click.bind (this);
+   }
+
+   click (e) {
+      e.preventDefault();
+      this.props.projectClick (this.props.project);
+   }
+
    render() {
       return (
-         <p className="project-card">{this.props.projectName}</p>
+         <p className="project-card" onClick={this.click}>{this.props.project.getTitle()}</p>
       );
    }
 }

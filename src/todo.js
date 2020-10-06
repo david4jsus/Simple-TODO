@@ -1,0 +1,207 @@
+// TODO item
+class Item {
+
+   // Constructor
+   constructor (parentProject, title, description, dueDate, priority, id) {
+      this.parentProject = parentProject; // (Project's id)
+      this.title = title;
+      this.description = description;
+      this.dueDate = dueDate;
+      this.priority = priority;
+      this.id = ((id === undefined) ? Date.now() : id);
+      this.isCompleted = false;
+   }
+
+   // Parent project getter (project's id)
+   getParentProject() {
+      return this.parentProject;
+   }
+
+   // Title getter
+   getTitle() {
+      return this.title;
+   }
+
+   // Title setter
+   setTitle (newTitle) {
+      this.title = newTitle;
+   }
+
+   // Description getter
+   getDescription() {
+      return this.description;
+   }
+
+   // Description setter
+   setDescription (newDescription) {
+      this.description = newDescription;
+   }
+
+   // Due date getter
+   getDueDate() {
+      return this.dueDate;
+   }
+
+   // Due date setter
+   setDueDate (newDueDate) {
+      this.dueDate = newDueDate;
+   }
+
+   // Priority getter
+   getPriority() {
+      return this.priority;
+   }
+
+   // Priority setter
+   setPriority (newPriority) {
+      this.priority = newPriority;
+   }
+
+   // ID getter
+   getId() {
+      return this.id;
+   }
+
+   // Get whether the item is completed
+   getIsCompleted() {
+      return this.isCompleted;
+   }
+
+   // Toggle completion status of the item
+   toggleCompletedStatus() {
+      this.isCompleted = !this.isCompleted;
+   }
+}
+
+class Project {
+
+   // Constructor
+   constructor (title, id) {
+      this.title = title;
+      this.id = id;
+      this.itemList = [];
+   }
+
+   // Title getter
+   getTitle() {
+      return this.title;
+   }
+
+   // Title setter
+   setTitle (newTitle) {
+      this.title = newTitle;
+   }
+
+   // ID getter
+   getId() {
+      return this.id;
+   }
+
+   // ID setter
+   setId (newID) {
+      this.id = newID;
+   }
+
+   // Get number of list items
+   getNumItems() {
+      return this.itemList.length();
+   }
+
+   // Add an item to the list
+   addItem (newItem) {
+      this.itemList.push (newItem);
+   }
+
+   // Getthe index of an item in the list
+   getItemIndex (itemID) {
+      return this.itemList.findIndex (function (item) {
+         return item.id === itemID;
+      });
+   }
+
+   // Get an item from the list
+   getItem (itemID) {
+
+      // Look for item with specified ID
+      let index = this.getItemIndex (itemID);
+
+      // Return such item if it is in the list
+      return (index === undefined) ? undefined : this.itemList[index];
+   }
+
+   // Erase an item from the list
+   eraseItem (itemID) {
+
+      // Look for item with specified ID
+      let index = this.getItemIndex (itemID);
+
+      // Remove such item from the list if it is there
+      if (index !== undefined) {
+         this.itemList.splice (index, 1);
+      }
+   }
+
+   // Get percentage of items completed in this project
+   getCompletionStatus() {
+      if (this.getNumItems <= 0) {
+         return "Empty";
+      } else {
+         // Keep track of how many items in this project are completed
+         let numItems = this.getNumItems;
+         let completedItems = 0;
+
+         // Iterate through list of items to find out how many items are completed
+         for (let i = 0; i < numItems; i++) {
+            if (this.getItem (i).isCompleted) {
+               completedItems++;
+            }
+         }
+
+         // Do the math and return the result
+         return ((completedItems / numItems * 100).toFixed (0)) + "%";
+      }
+   }
+
+   // Sort items list by a specified criterion
+   sortItemsBy (criterion) {
+      switch (criterion) {
+         default:
+         case "creationUp":
+            this.itemList.sort (function (a, b) {
+               return a.id - b.id;
+            });
+            break;
+         case "creationDown":
+            this.itemList.sort (function (a, b) {
+               return b.id - a.id;
+            });
+            break;
+         case "priorityUp":
+            this.itemList.sort (function (a, b) {
+               return a.priority - b.priority;
+            });
+            break;
+         case "priorityDown":
+            this.itemList.sort (function (a, b) {
+               return b.priority - a.priority;
+            });
+            break;
+         case "dueDateUp":
+            this.itemList.sort (function (a, b) {
+               let dateA = new Date (a.dueDate());
+               let dateB = new Date (b.dueDate());
+               return dateA.getTime() - dateB.getTime();
+            });
+            break;
+         case "dueDateDown":
+            this.itemList.sort (function (a, b) {
+               let dateA = new Date (a.dueDate());
+               let dateB = new Date (b.dueDate());
+               return dateB.getTime() - dateA.getTime();
+            });
+            break;
+      }
+   }
+}
+
+export {Item, Project};
