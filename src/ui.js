@@ -6,13 +6,13 @@ import {Item, Project} from "./todo";
 
 //==== TEST STUFF ====//
 var proj1 = new Project ("Proj1", 10);
-proj1.addItem (new Item (proj1, "Item 1", "Some description", "02-02-20", 0, 11));
-proj1.addItem (new Item (proj1, "Item 2", "Some description", "02-02-20", 0, 12));
-proj1.addItem (new Item (proj1, "Item 3", "Some description", "02-02-20", 0, 13));
+proj1.addItem (new Item (proj1, "Item 1", "Some description", "2020-08-19", 0, 11));
+proj1.addItem (new Item (proj1, "Item 2", "Some more description", "2020-08-20", 3, 12));
+proj1.addItem (new Item (proj1, "Item 3", "Even description", "2020-09-23", 2, 13));
 var proj2 = new Project ("project 2", 20);
-proj2.addItem (new Item (proj2, "Thing 1", "Some description", "02-02-20", 0, 21));
-proj2.addItem (new Item (proj2, "Thing 2", "Some description", "02-02-20", 0, 22));
-proj2.addItem (new Item (proj2, "Thing 3", "Some description", "02-02-20", 0, 23));
+proj2.addItem (new Item (proj2, "Thing 1", "Hello", "2019-05-14", 1, 21));
+proj2.addItem (new Item (proj2, "Thing 2", "Burgers", "2020-09-12", 3, 22));
+proj2.addItem (new Item (proj2, "Thing 3", "Orange", "2020-10-05", 0, 23));
 //====================//
 
 
@@ -117,7 +117,6 @@ class MainView extends React.Component {
 // List of items in a specific project
 class ProjectView extends React.Component {
    /* TODO
-      - Use props to determine what project to show
       - Finalize CSS
    */
 
@@ -181,9 +180,37 @@ class ItemCard extends React.Component {
       - Finalize CSS
    */
 
+   constructor (props) {
+      super (props);
+      this.toggleExpanded = this.toggleExpanded.bind (this);
+      this.state = {expanded: false};
+   }
+
+   toggleExpanded() {
+      this.setState ({expanded: !this.state.expanded});
+   }
+
    render() {
+      let infoClass = this.state.expanded ? "item-info-expanded" : "item-info-collapsed";
+
       return (
-         <p className="item-card">{this.props.item.getTitle()}</p>
+         <div className="item-card" onClick={this.toggleExpanded}>
+            <span>{this.props.item.getTitle()}</span>
+            <ul className={infoClass}>
+               <li>
+                  <span className="item-info-label">Description: </span>
+                  {this.props.item.getDescription()}
+               </li>
+               <li>
+                  <span className="item-info-label">Due date: </span>
+                  {this.props.item.getDueDate()}
+               </li>
+               <li>
+                  <span className="item-info-label">Priority: </span>
+                  {this.props.item.getPriority()}
+               </li>
+            </ul>
+         </div>
       );
    }
 }
