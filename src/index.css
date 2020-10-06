@@ -36,3 +36,12 @@ body {
    background-color: #cccccc;
    cursor: pointer;
 }
+
+.link-to-projects {
+   border-radius: 10px;
+}
+
+.link-to-projects:hover {
+   background-color: #cccccc;
+   cursor: pointer;
+}

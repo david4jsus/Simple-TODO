@@ -58,7 +58,7 @@ class Item {
    }
 
    // ID getter
-   getId() {
+   getID() {
       return this.id;
    }
 
@@ -104,7 +104,7 @@ class Project {
 
    // Get number of list items
    getNumItems() {
-      return this.itemList.length();
+      return this.itemList.length;
    }
 
    // Add an item to the list
@@ -127,6 +127,16 @@ class Project {
 
       // Return such item if it is in the list
       return (index === undefined) ? undefined : this.itemList[index];
+   }
+
+   // Get an item from the list specified by the index
+   getItemByIndex (index) {
+
+      // Retrieve specified item if the index is valid
+      if (index >= 0 && index < this.getNumItems()) {
+         return this.itemList[index];
+      }
+      return undefined;
    }
 
    // Erase an item from the list

@@ -5,8 +5,14 @@ import React from 'react';
 import {Item, Project} from "./todo";
 
 //==== TEST STUFF ====//
-var proj1 = new Project ("Proj1", 111);
-var proj2 = new Project ("project 2", 222);
+var proj1 = new Project ("Proj1", 10);
+proj1.addItem (new Item (proj1, "Item 1", "Some description", "02-02-20", 0, 11));
+proj1.addItem (new Item (proj1, "Item 2", "Some description", "02-02-20", 0, 12));
+proj1.addItem (new Item (proj1, "Item 3", "Some description", "02-02-20", 0, 13));
+var proj2 = new Project ("project 2", 20);
+proj2.addItem (new Item (proj2, "Thing 1", "Some description", "02-02-20", 0, 21));
+proj2.addItem (new Item (proj2, "Thing 2", "Some description", "02-02-20", 0, 22));
+proj2.addItem (new Item (proj2, "Thing 3", "Some description", "02-02-20", 0, 23));
 //====================//
 
 
@@ -46,12 +52,18 @@ class AppContent extends React.Component {
    constructor (props) {
       super (props);
       this.enterProject = this.enterProject.bind (this);
+      this.enterMainView = this.enterMainView.bind (this);
       this.state = {view: "main_view", project: null};
    }
 
    enterProject (targetProject) {
       this.setState ({view: "project_view"});
       this.setState ({project: targetProject});
+   }
+
+   enterMainView() {
+      this.setState ({view: "main_view"});
+      this.setState ({project: null});
    }
 
    render() {
@@ -61,7 +73,7 @@ class AppContent extends React.Component {
                <MainView projectClick={this.enterProject}/>
             }
             {this.state.view === "project_view" &&
-               <ProjectView project={this.state.project} />
+               <ProjectView project={this.state.project} linkBack={this.enterMainView} />
             }
          </div>
       );
@@ -109,12 +121,29 @@ class ProjectView extends React.Component {
       - Finalize CSS
    */
 
+   constructor (props) {
+      super (props);
+      this.linkBackClick = this.linkBackClick.bind (this);
+   }
+
+   linkBackClick() {
+      this.props.linkBack();
+   }
+
    render() {
+      const items = [];
+      for (let i = 0; i < this.props.project.getNumItems(); i++) {
+         items.push (this.props.project.getItemByIndex (i));
+      }
+      const listItems = items.map (function (item) {
+         return <ItemCard item={item} key={item.getID()} />;
+      });
+
       return (
          <>
+            <h3 className="link-to-projects" onClick={this.linkBackClick}>&lt; Projects</h3>
             <h2>{this.props.project.getTitle()}</h2>
-            <ItemCard />
-            <ItemCard />
+            {listItems}
          </>
       );
    }
@@ -123,7 +152,6 @@ class ProjectView extends React.Component {
 // Shows project title, options when hovered
 class ProjectCard extends React.Component {
    /* TODO
-      - Add onclick() to enter this project's view
       - Add options when hovering
       - Finalize CSS
    */
@@ -148,7 +176,6 @@ class ProjectCard extends React.Component {
 // Shows item textbox and title, options when hovered, details when selected
 class ItemCard extends React.Component {
    /* TODO
-      - Use props to determine what item to show
       - Add onclick() to expand/minimize item details + show options
       - Add options when hovering
       - Finalize CSS
@@ -156,7 +183,7 @@ class ItemCard extends React.Component {
 
    render() {
       return (
-         <p className="item-card">Item</p>
+         <p className="item-card">{this.props.item.getTitle()}</p>
       );
    }
 }
