@@ -93,7 +93,7 @@ class Project {
    }
 
    // ID getter
-   getId() {
+   getID() {
       return this.id;
    }
 
@@ -214,4 +214,55 @@ class Project {
    }
 }
 
-export {Item, Project};
+class AppManager {
+
+   // Constructor
+   constructor() {
+      this.projectList = [];
+   }
+
+   // Get the number of projects in the list of projects
+   getNumProjects() {
+      return this.projectList.length;
+   }
+
+   // Add a project to the list of projects
+   addProject (newTitle) {
+
+      // Create a unique ID for the new project
+      let newID = Date.now();
+
+      // Create project
+      let newProject = new Project (newTitle, newID);
+
+      // Add the new project to tthe list
+      this.projectList.push (newProject);
+   }
+
+   // Remove a project from the list of projects
+   removeProject (projectID) {
+      //
+   }
+
+   // Get a project from the list of projects
+   getProject (projectID) {
+      //
+   }
+
+   // Get a project from thelist of projects given an index
+   getProjectByIndex (projectIndex) {
+
+      // Get project if index is valid
+      if (projectIndex >= 0 && projectIndex < this.getNumProjects()) {
+         return this.projectList[projectIndex];
+      }
+      return null;
+   }
+
+   // Get the list of projects
+   getProjectList() {
+      return this.projectList;
+   }
+}
+
+export {Item, Project, AppManager};

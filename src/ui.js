@@ -2,19 +2,11 @@
 import React from 'react';
 
 // Import our TODO API thingy
-import {Item, Project} from "./todo";
+import {Item, Project, AppManager} from "./todo";
 
 //==== TEST STUFF ====//
-var proj1 = new Project ("Proj1", 10);
-proj1.addItem (new Item (proj1, "Item 1", "Some description", "2020-08-19", 0, 11));
-proj1.addItem (new Item (proj1, "Item 2", "Some more description", "2020-08-20", 3, 12));
-proj1.addItem (new Item (proj1, "Item 3", "Even description", "2020-09-23", 2, 13));
-var proj2 = new Project ("project 2", 20);
-proj2.addItem (new Item (proj2, "Thing 1", "Hello", "2019-05-14", 1, 21));
-proj2.addItem (new Item (proj2, "Thing 2", "Burgers", "2020-09-12", 3, 22));
-proj2.addItem (new Item (proj2, "Thing 3", "Orange", "2020-10-05", 0, 23));
+var appManager = new AppManager();
 //====================//
-
 
 // Renders the web app (back to root node)
 function App() {
@@ -103,12 +95,31 @@ class MainView extends React.Component {
       - Work on the other components that will be invoked from here
    */
 
+   constructor (props) {
+      super (props);
+      this.state = {projectForm: false};
+      this.openProjectForm = this.openProjectForm.bind (this);
+      this.closeProjectForm = this.closeProjectForm.bind (this);
+   }
+
+   openProjectForm() {
+      this.setState ({projectForm: true});
+   }
+
+   closeProjectForm() {
+      this.setState ({projectForm: false});
+   }
+
    render () {
+      const listProjects = appManager.getProjectList().map (function (project) {
+         return <ProjectCard project={project} projectClick={this.props.projectClick} key={project.getID()} />;
+      }, this);
+
       return (
          <>
-            <h2>Projects | + | All items</h2>
-            <ProjectCard project={proj1} projectClick={this.props.projectClick} />
-            <ProjectCard project={proj2} projectClick={this.props.projectClick} />
+            <h2>Projects <span className="stay-right">| <button className="circle-button" onClick={this.openProjectForm}>+</button> | All items</span></h2>
+            {listProjects}
+            {this.state.projectForm && <ProjectForm onCreate={this.closeProjectForm} onCancel={this.closeProjectForm} />}
          </>
       );
    }
@@ -210,6 +221,40 @@ class ItemCard extends React.Component {
                   {this.props.item.getPriority()}
                </li>
             </ul>
+         </div>
+      );
+   }
+}
+
+// Shows form to create a project
+class ProjectForm extends React.Component {
+
+   constructor (props) {
+      super (props);
+      this.state = {newTitle: ""};
+      this.handleTitleChange = this.handleTitleChange.bind (this);
+      this.createProject = this.createProject.bind (this);
+   }
+
+   handleTitleChange (evt) {
+      this.setState ({newTitle: evt.target.value});
+   }
+
+   createProject() {
+      appManager.addProject (this.state.newTitle);
+      this.props.onCreate();
+   }
+
+   render() {
+      return (
+         <div id="newProjectForm" className="form">
+            <h3>New Project</h3>
+            <p>
+               <label htmlFor="newProjectTitle">Title:</label>
+               <input id="newProjectTitle" type="text" placeholder="New Project" value={this.state.value} onChange={this.handleTitleChange} />
+            </p>
+            <button onClick={this.createProject}>Create</button>
+            <button onClick={this.props.onCancel}>Cancel</button>
          </div>
       );
    }
