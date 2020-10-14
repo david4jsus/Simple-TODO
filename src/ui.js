@@ -133,11 +133,22 @@ class ProjectView extends React.Component {
 
    constructor (props) {
       super (props);
+      this.state = {itemForm: false};
       this.linkBackClick = this.linkBackClick.bind (this);
+      this.openItemForm = this.openItemForm.bind (this);
+      this.closeItemForm = this.closeItemForm.bind (this);
    }
 
    linkBackClick() {
       this.props.linkBack();
+   }
+
+   openItemForm() {
+      this.setState ({itemForm: true});
+   }
+
+   closeItemForm() {
+      this.setState ({itemForm: false});
    }
 
    render() {
@@ -152,8 +163,9 @@ class ProjectView extends React.Component {
       return (
          <>
             <h3 className="link-to-projects" onClick={this.linkBackClick}>&lt; Projects</h3>
-            <h2>{this.props.project.getTitle()}</h2>
+            <h2>{this.props.project.getTitle()}<span className="stay-right">| <button className="circle-button" onClick={this.openItemForm}>+</button></span></h2>
             {listItems}
+            {this.state.itemForm && <ItemForm onCreate={this.closeItemForm} onCancel={this.closeItemForm} projectID={this.props.project.getID()} />}
          </>
       );
    }
@@ -251,9 +263,74 @@ class ProjectForm extends React.Component {
             <h3>New Project</h3>
             <p>
                <label htmlFor="newProjectTitle">Title:</label>
-               <input id="newProjectTitle" type="text" placeholder="New Project" value={this.state.value} onChange={this.handleTitleChange} />
+               <input id="newProjectTitle" type="text" placeholder="New Project" value={this.state.newTitle} onChange={this.handleTitleChange} />
             </p>
             <button onClick={this.createProject}>Create</button>
+            <button onClick={this.props.onCancel}>Cancel</button>
+         </div>
+      );
+   }
+}
+
+// Shows form to create an item
+class ItemForm extends React.Component {
+
+   constructor (props) {
+      super (props);
+      this.state = {newTitle: "", newDescription: "", newDueDate: "", newPriority: ""};
+      this.handleTitleChange = this.handleTitleChange.bind (this);
+      this.handleDescriptionChange = this.handleDescriptionChange.bind (this);
+      this.handleDueDateChange = this.handleDueDateChange.bind (this);
+      this.handlePriorityChange = this.handlePriorityChange.bind (this);
+      this.createItem = this.createItem.bind (this);
+   }
+
+   handleTitleChange (evt) {
+      this.setState ({newTitle: evt.target.value});
+   }
+
+   handleDescriptionChange (evt) {
+      this.setState ({newDescription: evt.target.value});
+   }
+
+   handleDueDateChange (evt) {
+      this.setState ({newDueDate: evt.target.value});
+   }
+
+   handlePriorityChange (evt) {
+      this.setState ({newPriority: evt.target.value});
+   }
+
+   createItem() {
+      appManager.addItem (this.props.projectID, this.state.newTitle, this.state.newDescription, this.state.newDueDate, this.state.newPriority);
+      this.props.onCreate();
+   }
+
+   render() {
+      return (
+         <div id="newItemForm" className="form">
+            <h3>New TODO Item</h3>
+            <p>
+               <label htmlFor="newItemTitle">Title:</label>
+               <input id="newItemTitle" type="text" placeholder="New TODO Item" value={this.state.newTitle} onChange={this.handleTitleChange} />
+            </p>
+            <p>
+               <label htmlFor="newItemDescription">Description:</label>
+               <input id="newItemDescription" type="text" value={this.state.newDescription} onChange={this.handleDescriptionChange} />
+            </p>
+            <p>
+               <label htmlFor="newItemDueDate">Due Date:</label>
+               <input id="newItemDueDate" type="date" value={this.state.newDueDate} onChange={this.handleDueDateChange} />
+            </p>
+            <p>
+               <label htmlFor="newItemPriority">Priority:</label>
+               <select id="newItemPriority" value={this.state.newPriority} onChange={this.handlePriorityChange}>
+                  <option value="0">Low</option>
+                  <option value="1">Moderate</option>
+                  <option value="2">High</option>
+               </select>
+            </p>
+            <button onClick={this.createItem}>Create</button>
             <button onClick={this.props.onCancel}>Cancel</button>
          </div>
       );

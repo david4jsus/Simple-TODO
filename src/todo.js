@@ -241,12 +241,38 @@ class AppManager {
 
    // Remove a project from the list of projects
    removeProject (projectID) {
-      //
+
+      // Target project index
+      let projectIndex = -1;
+
+      // Find index of the project with matching ID
+      for (let i = 0; i < this.projectList.length; i++) {
+         if (projectID === this.projectList[i]) {
+            projectIndex = i;
+            break;
+         }
+      }
+
+      // Remove project from list if found
+      if (projectIndex >= 0) {
+         this.projectList.splice (projectIndex, 1);
+      }
    }
 
    // Get a project from the list of projects
    getProject (projectID) {
-      //
+
+      // Cycle through all projects until the one with matching ID is found
+      for (let i = 0; i < this.projectList.length; i++) {
+         if (projectID === this.projectList[i].getID()) {
+
+            // Return the project with matching ID
+            return this.projectList[i];
+         }
+      }
+
+      // If no project with matching ID found, return null
+      return null;
    }
 
    // Get a project from thelist of projects given an index
@@ -262,6 +288,42 @@ class AppManager {
    // Get the list of projects
    getProjectList() {
       return this.projectList;
+   }
+
+   // Add an item to a project
+   addItem (projectID, newTitle, newDescription, newDueDate, newPriority) {
+
+      // Create a unique ID for the new item
+      let newID = Date.now();
+
+      // Create new item
+      let newItem = new Item (projectID, newTitle, newDescription, newDueDate, newPriority, newID);
+
+      // Add the new item to its project
+      let project = this.getProject (projectID);
+      project.addItem (newItem);
+   }
+
+   removeItemFromProject (itemID, projectID) {
+      //
+   }
+
+   getItemFromProject (itemID, projectID) {
+      //
+   }
+
+   getItemByIndexFromProject (itemIndex, projectID) {
+      //
+   }
+
+   // Get the list of items from a specified project
+   getItemListFromProject (projectID) {
+
+      // Get the specified project
+      let project = this.getProject (projectID);
+
+      // Return the item list
+      return project.itemList;
    }
 }
 
