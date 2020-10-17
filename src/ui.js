@@ -29,7 +29,7 @@ class AppHeader extends React.Component {
    render() {
       return(
          <div className="app-header">
-            <h1>Simple TODO | &#9776;</h1>
+            <h1>Simple TODO <span className="stay-right">&#9776;</span></h1>
          </div>
       );
    }
@@ -117,7 +117,7 @@ class MainView extends React.Component {
 
       return (
          <>
-            <h2>Projects <span className="stay-right">| <button className="circle-button" onClick={this.openProjectForm}>+</button> | All items</span></h2>
+            <h2>Projects<span className="stay-right"><button className="circle-button" onClick={this.openProjectForm}>+</button> | All items</span></h2>
             {listProjects}
             {this.state.projectForm && <ProjectForm onCreate={this.closeProjectForm} onCancel={this.closeProjectForm} />}
          </>
@@ -133,10 +133,12 @@ class ProjectView extends React.Component {
 
    constructor (props) {
       super (props);
-      this.state = {itemForm: false};
+      this.state = {itemForm: false, projectEditForm: false};
       this.linkBackClick = this.linkBackClick.bind (this);
       this.openItemForm = this.openItemForm.bind (this);
       this.closeItemForm = this.closeItemForm.bind (this);
+      this.openProjectEditForm = this.openProjectEditForm.bind (this);
+      this.closeProjectEditForm = this.closeProjectEditForm.bind (this);
    }
 
    linkBackClick() {
@@ -145,10 +147,20 @@ class ProjectView extends React.Component {
 
    openItemForm() {
       this.setState ({itemForm: true});
+      this.setState ({projectEditForm: false});
    }
 
    closeItemForm() {
       this.setState ({itemForm: false});
+   }
+
+   openProjectEditForm() {
+      this.setState ({projectEditForm: true});
+      this.setState ({itemForm: false});
+   }
+
+   closeProjectEditForm() {
+      this.setState ({projectEditForm: false});
    }
 
    render() {
@@ -163,9 +175,22 @@ class ProjectView extends React.Component {
       return (
          <>
             <h3 className="link-to-projects" onClick={this.linkBackClick}>&lt; Projects</h3>
-            <h2>{this.props.project.getTitle()}<span className="stay-right">| <button className="circle-button" onClick={this.openItemForm}>+</button></span></h2>
+            <h2>
+               {this.props.project.getTitle()}
+               <span className="stay-right">
+                  <span className="circle-button" onClick={this.openItemForm}>+</span>
+                  <div className="project-options-menu">
+                     <span className="circle-button">&#8942;</span>
+                     <div className="project-options-menu-items">
+                        <span onClick={this.openProjectEditForm}>Edit project</span>
+                        <span>Delete project</span>
+                     </div>
+                  </div>
+               </span>
+            </h2>
             {listItems}
             {this.state.itemForm && <ItemForm onCreate={this.closeItemForm} onCancel={this.closeItemForm} projectID={this.props.project.getID()} />}
+            {this.state.projectEditForm && <ProjectEditForm onEdit={this.closeProjectEditForm} onCancel={this.closeProjectEditForm} project={this.props.project} />}
          </>
       );
    }
@@ -331,6 +356,40 @@ class ItemForm extends React.Component {
                </select>
             </p>
             <button onClick={this.createItem}>Create</button>
+            <button onClick={this.props.onCancel}>Cancel</button>
+         </div>
+      );
+   }
+}
+
+// Shows form to edit a project
+class ProjectEditForm extends React.Component {
+
+   constructor (props) {
+      super (props);
+      this.state = {newTitle: this.props.project.getTitle()};
+      this.handleTitleChange = this.handleTitleChange.bind (this);
+      this.createProject = this.createProject.bind (this);
+   }
+
+   handleTitleChange (evt) {
+      this.setState ({newTitle: evt.target.value});
+   }
+
+   createProject() {
+      this.props.project.setTitle (this.state.newTitle);
+      this.props.onEdit();
+   }
+
+   render() {
+      return (
+         <div id="projectEditForm" className="form">
+            <h3>Edit '{this.props.project.getTitle()}'</h3>
+            <p>
+               <label htmlFor="newProjectTitle">Title:</label>
+               <input id="newProjectTitle" type="text" value={this.state.newTitle} onChange={this.handleTitleChange} />
+            </p>
+            <button onClick={this.createProject}>Create</button>
             <button onClick={this.props.onCancel}>Cancel</button>
          </div>
       );
