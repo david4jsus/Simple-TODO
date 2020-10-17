@@ -107,3 +107,14 @@ body {
 .project-options-menu:hover .project-options-menu-items {
    display: block;
 }
+
+.confirmation-prompt {
+   width: 80%;
+   position: fixed;
+   left: 10%;
+   top: 25%;
+   border: 1px solid black;
+   border-radius: 10px;
+   background-color: #cccccc;
+   box-shadow: 5px 5px 16px grey;
+}

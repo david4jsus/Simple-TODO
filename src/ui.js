@@ -133,12 +133,19 @@ class ProjectView extends React.Component {
 
    constructor (props) {
       super (props);
-      this.state = {itemForm: false, projectEditForm: false};
+      this.state = {
+         itemForm: false,
+         projectEditForm: false,
+         projectDeletePrompt: false
+      };
       this.linkBackClick = this.linkBackClick.bind (this);
       this.openItemForm = this.openItemForm.bind (this);
       this.closeItemForm = this.closeItemForm.bind (this);
       this.openProjectEditForm = this.openProjectEditForm.bind (this);
       this.closeProjectEditForm = this.closeProjectEditForm.bind (this);
+      this.openProjectDeletePrompt = this.openProjectDeletePrompt.bind (this);
+      this.closeProjectDeletePrompt = this.closeProjectDeletePrompt.bind (this);
+      this.deleteProject = this.deleteProject.bind (this);
    }
 
    linkBackClick() {
@@ -148,6 +155,7 @@ class ProjectView extends React.Component {
    openItemForm() {
       this.setState ({itemForm: true});
       this.setState ({projectEditForm: false});
+      this.setState ({projectDeletePrompt: false});
    }
 
    closeItemForm() {
@@ -157,13 +165,31 @@ class ProjectView extends React.Component {
    openProjectEditForm() {
       this.setState ({projectEditForm: true});
       this.setState ({itemForm: false});
+      this.setState ({projectDeletePrompt: false});
    }
 
    closeProjectEditForm() {
       this.setState ({projectEditForm: false});
    }
 
+   openProjectDeletePrompt() {
+      this.setState ({projectDeletePrompt: true});
+      this.setState ({itemForm: false});
+      this.setState ({projectEditForm: false});
+   }
+
+   closeProjectDeletePrompt() {
+      this.setState ({projectDeletePrompt: false});
+   }
+
+   deleteProject() {
+      this.props.linkBack();
+      appManager.removeProject (this.props.project.getID());
+   }
+
    render() {
+
+      // Create list of TODO items to show
       const items = [];
       for (let i = 0; i < this.props.project.getNumItems(); i++) {
          items.push (this.props.project.getItemByIndex (i));
@@ -171,6 +197,9 @@ class ProjectView extends React.Component {
       const listItems = items.map (function (item) {
          return <ItemCard item={item} key={item.getID()} />;
       });
+
+      // Create warning prompt for project deletion
+      const deletePrompt = "Are you sure you want to delete project '" + this.props.project.getTitle() + "'? (There is no undo)";
 
       return (
          <>
@@ -183,7 +212,7 @@ class ProjectView extends React.Component {
                      <span className="circle-button">&#8942;</span>
                      <div className="project-options-menu-items">
                         <span onClick={this.openProjectEditForm}>Edit project</span>
-                        <span>Delete project</span>
+                        <span onClick={this.openProjectDeletePrompt}>Delete project</span>
                      </div>
                   </div>
                </span>
@@ -191,6 +220,7 @@ class ProjectView extends React.Component {
             {listItems}
             {this.state.itemForm && <ItemForm onCreate={this.closeItemForm} onCancel={this.closeItemForm} projectID={this.props.project.getID()} />}
             {this.state.projectEditForm && <ProjectEditForm onEdit={this.closeProjectEditForm} onCancel={this.closeProjectEditForm} project={this.props.project} />}
+            {this.state.projectDeletePrompt && <ConfirmationPrompt prompt={deletePrompt} onAccept={this.deleteProject} onCancel={this.closeProjectDeletePrompt} />}
          </>
       );
    }
@@ -390,6 +420,20 @@ class ProjectEditForm extends React.Component {
                <input id="newProjectTitle" type="text" value={this.state.newTitle} onChange={this.handleTitleChange} />
             </p>
             <button onClick={this.createProject}>Create</button>
+            <button onClick={this.props.onCancel}>Cancel</button>
+         </div>
+      );
+   }
+}
+
+// Shows floating confirmation menu with customizable text
+class ConfirmationPrompt extends React.Component {
+
+   render() {
+      return (
+         <div className="confirmation-prompt">
+            <p>{this.props.prompt}</p>
+            <button onClick={this.props.onAccept}>Accept</button>
             <button onClick={this.props.onCancel}>Cancel</button>
          </div>
       );

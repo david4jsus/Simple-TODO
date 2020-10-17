@@ -247,7 +247,7 @@ class AppManager {
 
       // Find index of the project with matching ID
       for (let i = 0; i < this.projectList.length; i++) {
-         if (projectID === this.projectList[i]) {
+         if (projectID === this.projectList[i].getID()) {
             projectIndex = i;
             break;
          }
