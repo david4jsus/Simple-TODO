@@ -84,11 +84,11 @@ body {
    box-shadow: 5px 5px 16px grey;
 }
 
-.project-options-menu {
+.options-menu {
    float: right;
 }
 
-.project-options-menu-items {
+.options-menu-items {
    display: none;
    position: absolute;
    right: 15px;
@@ -99,12 +99,12 @@ body {
    box-shadow: 5px 5px 16px grey;
 }
 
-.project-options-menu-items span {
+.options-menu-items span {
    display: block;
    cursor: pointer;
 }
 
-.project-options-menu:hover .project-options-menu-items {
+.options-menu:hover .options-menu-items {
    display: block;
 }
 

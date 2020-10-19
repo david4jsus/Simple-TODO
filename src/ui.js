@@ -136,7 +136,10 @@ class ProjectView extends React.Component {
       this.state = {
          itemForm: false,
          projectEditForm: false,
-         projectDeletePrompt: false
+         projectDeletePrompt: false,
+         itemEditForm : false,
+         itemDeletePrompt : false,
+         targetItem : 0
       };
       this.linkBackClick = this.linkBackClick.bind (this);
       this.openItemForm = this.openItemForm.bind (this);
@@ -146,6 +149,10 @@ class ProjectView extends React.Component {
       this.openProjectDeletePrompt = this.openProjectDeletePrompt.bind (this);
       this.closeProjectDeletePrompt = this.closeProjectDeletePrompt.bind (this);
       this.deleteProject = this.deleteProject.bind (this);
+      this.openItemEditForm = this.openItemEditForm.bind (this);
+      this.closeItemEditForm = this.closeItemEditForm.bind (this);
+      this.openItemDeletePrompt = this.openItemDeletePrompt.bind (this);
+      this.closeItemDeletePrompt = this.closeItemDeletePrompt.bind (this);
    }
 
    linkBackClick() {
@@ -156,6 +163,8 @@ class ProjectView extends React.Component {
       this.setState ({itemForm: true});
       this.setState ({projectEditForm: false});
       this.setState ({projectDeletePrompt: false});
+      this.setState ({itemEditForm: false});
+      this.setState ({itemDeletePrompt : false});
    }
 
    closeItemForm() {
@@ -166,6 +175,8 @@ class ProjectView extends React.Component {
       this.setState ({projectEditForm: true});
       this.setState ({itemForm: false});
       this.setState ({projectDeletePrompt: false});
+      this.setState ({itemEditForm: false});
+      this.setState ({itemDeletePrompt : false});
    }
 
    closeProjectEditForm() {
@@ -176,6 +187,8 @@ class ProjectView extends React.Component {
       this.setState ({projectDeletePrompt: true});
       this.setState ({itemForm: false});
       this.setState ({projectEditForm: false});
+      this.setState ({itemEditForm: false});
+      this.setState ({itemDeletePrompt : false});
    }
 
    closeProjectDeletePrompt() {
@@ -187,6 +200,30 @@ class ProjectView extends React.Component {
       appManager.removeProject (this.props.project.getID());
    }
 
+   openItemEditForm (itemID) {
+      this.setState ({targetItem : itemID});
+      this.setState ({itemEditForm : true});
+      this.setState ({itemForm : false});
+      this.setState ({projectEditForm : false});
+      this.setState ({projectDeletePrompt : false});
+      this.setState ({itemDeletePrompt : false});
+      console.log (itemID);
+   }
+
+   closeItemEditForm() {
+      this.setState ({itemEditForm: false});
+      this.setState ({targetItem: 0});
+   }
+
+   openItemDeletePrompt (itemID) {
+      //
+      console.log (itemID);
+   }
+
+   closeItemDeletePrompt() {
+      //
+   }
+
    render() {
 
       // Create list of TODO items to show
@@ -195,8 +232,8 @@ class ProjectView extends React.Component {
          items.push (this.props.project.getItemByIndex (i));
       }
       const listItems = items.map (function (item) {
-         return <ItemCard item={item} key={item.getID()} />;
-      });
+         return <ItemCard item={item} key={item.getID()} onItemEdit={this.openItemEditForm} onItemDelete={this.openItemDeletePrompt} />;
+      }, this);
 
       // Create warning prompt for project deletion
       const deletePrompt = "Are you sure you want to delete project '" + this.props.project.getTitle() + "'? (There is no undo)";
@@ -208,9 +245,9 @@ class ProjectView extends React.Component {
                {this.props.project.getTitle()}
                <span className="stay-right">
                   <span className="circle-button" onClick={this.openItemForm}>+</span>
-                  <div className="project-options-menu">
+                  <div className="options-menu">
                      <span className="circle-button">&#8942;</span>
-                     <div className="project-options-menu-items">
+                     <div className="options-menu-items">
                         <span onClick={this.openProjectEditForm}>Edit project</span>
                         <span onClick={this.openProjectDeletePrompt}>Delete project</span>
                      </div>
@@ -221,6 +258,7 @@ class ProjectView extends React.Component {
             {this.state.itemForm && <ItemForm onCreate={this.closeItemForm} onCancel={this.closeItemForm} projectID={this.props.project.getID()} />}
             {this.state.projectEditForm && <ProjectEditForm onEdit={this.closeProjectEditForm} onCancel={this.closeProjectEditForm} project={this.props.project} />}
             {this.state.projectDeletePrompt && <ConfirmationPrompt prompt={deletePrompt} onAccept={this.deleteProject} onCancel={this.closeProjectDeletePrompt} />}
+            {this.state.itemEditForm && <ItemEditForm item={this.props.project.getItem (this.state.targetItem)} onEdit={this.closeItemEditForm} onCancel={this.closeItemEditForm} />}
          </>
       );
    }
@@ -260,8 +298,8 @@ class ItemCard extends React.Component {
 
    constructor (props) {
       super (props);
-      this.toggleExpanded = this.toggleExpanded.bind (this);
       this.state = {expanded: false};
+      this.toggleExpanded = this.toggleExpanded.bind (this);
    }
 
    toggleExpanded() {
@@ -269,11 +307,18 @@ class ItemCard extends React.Component {
    }
 
    render() {
-      let infoClass = this.state.expanded ? "item-info-expanded" : "item-info-collapsed";
+      const infoClass = this.state.expanded ? "item-info-expanded" : "item-info-collapsed";
 
       return (
          <div className="item-card" onClick={this.toggleExpanded}>
             <span>{this.props.item.getTitle()}</span>
+            <div className="options-menu">
+               <span className="stay-right">&#8942;</span>
+               <div className="options-menu-items">
+                  <span onClick={() => {this.props.onItemEdit (this.props.item.getID())}}>Edit item</span>
+                  <span onClick={this.props.onItemDelete}>Delete item</span>
+               </div>
+            </div>
             <ul className={infoClass}>
                <li>
                   <span className="item-info-label">Description: </span>
@@ -332,7 +377,12 @@ class ItemForm extends React.Component {
 
    constructor (props) {
       super (props);
-      this.state = {newTitle: "", newDescription: "", newDueDate: "", newPriority: ""};
+      this.state = {
+         newTitle: "",
+         newDescription: "",
+         newDueDate: "",
+         newPriority: ""
+      };
       this.handleTitleChange = this.handleTitleChange.bind (this);
       this.handleDescriptionChange = this.handleDescriptionChange.bind (this);
       this.handleDueDateChange = this.handleDueDateChange.bind (this);
@@ -399,14 +449,14 @@ class ProjectEditForm extends React.Component {
       super (props);
       this.state = {newTitle: this.props.project.getTitle()};
       this.handleTitleChange = this.handleTitleChange.bind (this);
-      this.createProject = this.createProject.bind (this);
+      this.editProject = this.editProject.bind (this);
    }
 
    handleTitleChange (evt) {
       this.setState ({newTitle: evt.target.value});
    }
 
-   createProject() {
+   editProject() {
       this.props.project.setTitle (this.state.newTitle);
       this.props.onEdit();
    }
@@ -419,7 +469,7 @@ class ProjectEditForm extends React.Component {
                <label htmlFor="newProjectTitle">Title:</label>
                <input id="newProjectTitle" type="text" value={this.state.newTitle} onChange={this.handleTitleChange} />
             </p>
-            <button onClick={this.createProject}>Create</button>
+            <button onClick={this.editProject}>Edit</button>
             <button onClick={this.props.onCancel}>Cancel</button>
          </div>
       );
@@ -433,7 +483,80 @@ class ConfirmationPrompt extends React.Component {
       return (
          <div className="confirmation-prompt">
             <p>{this.props.prompt}</p>
-            <button onClick={this.props.onAccept}>Accept</button>
+            <button onClick={this.props.onAccept}>Save</button>
+            <button onClick={this.props.onCancel}>Cancel</button>
+         </div>
+      );
+   }
+}
+
+// Shows form to edit an item
+class ItemEditForm extends React.Component {
+
+   constructor (props) {
+      super (props);
+      this.state = {
+         newTitle: this.props.item.getTitle(),
+         newDescription: this.props.item.getDescription(),
+         newDueDate: this.props.item.getDueDate(),
+         newPriority: this.props.item.getPriority()
+      };
+      this.handleTitleChange = this.handleTitleChange.bind (this);
+      this.handleDescriptionChange = this.handleDescriptionChange.bind (this);
+      this.handleDueDateChange = this.handleDueDateChange.bind (this);
+      this.handlePriorityChange = this.handlePriorityChange.bind (this);
+      this.editItem = this.editItem.bind (this);
+   }
+
+   handleTitleChange (evt) {
+      this.setState ({newTitle: evt.target.value});
+   }
+
+   handleDescriptionChange (evt) {
+      this.setState ({newDescription: evt.target.value});
+   }
+
+   handleDueDateChange (evt) {
+      this.setState ({newDueDate: evt.target.value});
+   }
+
+   handlePriorityChange (evt) {
+      this.setState ({newPriority: evt.target.value});
+   }
+
+   editItem() {
+      this.props.item.setTitle (this.state.newTitle);
+      this.props.item.setDescription (this.state.newDescription);
+      this.props.item.setDueDate (this.state.newDueDate);
+      this.props.item.setPriority (this.state.newPriority);
+      this.props.onEdit();
+   }
+
+   render() {
+      return (
+         <div id="itemEditForm" className="form">
+            <h3>Edit '{this.props.item.getTitle()}' Item</h3>
+            <p>
+               <label htmlFor="newItemTitle">Title:</label>
+               <input id="newItemTitle" type="text" placeholder="New TODO Item" value={this.state.newTitle} onChange={this.handleTitleChange} />
+            </p>
+            <p>
+               <label htmlFor="newItemDescription">Description:</label>
+               <input id="newItemDescription" type="text" value={this.state.newDescription} onChange={this.handleDescriptionChange} />
+            </p>
+            <p>
+               <label htmlFor="newItemDueDate">Due Date:</label>
+               <input id="newItemDueDate" type="date" value={this.state.newDueDate} onChange={this.handleDueDateChange} />
+            </p>
+            <p>
+               <label htmlFor="newItemPriority">Priority:</label>
+               <select id="newItemPriority" value={this.state.newPriority} onChange={this.handlePriorityChange}>
+                  <option value="0">Low</option>
+                  <option value="1">Moderate</option>
+                  <option value="2">High</option>
+               </select>
+            </p>
+            <button onClick={this.editItem}>Save</button>
             <button onClick={this.props.onCancel}>Cancel</button>
          </div>
       );
