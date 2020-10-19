@@ -153,6 +153,7 @@ class ProjectView extends React.Component {
       this.closeItemEditForm = this.closeItemEditForm.bind (this);
       this.openItemDeletePrompt = this.openItemDeletePrompt.bind (this);
       this.closeItemDeletePrompt = this.closeItemDeletePrompt.bind (this);
+      this.deleteItem = this.deleteItem.bind (this);
    }
 
    linkBackClick() {
@@ -207,7 +208,6 @@ class ProjectView extends React.Component {
       this.setState ({projectEditForm : false});
       this.setState ({projectDeletePrompt : false});
       this.setState ({itemDeletePrompt : false});
-      console.log (itemID);
    }
 
    closeItemEditForm() {
@@ -216,12 +216,22 @@ class ProjectView extends React.Component {
    }
 
    openItemDeletePrompt (itemID) {
-      //
-      console.log (itemID);
+      this.setState ({targetItem : itemID});
+      this.setState ({itemDeletePrompt: true});
+      this.setState ({itemForm: false});
+      this.setState ({projectEditForm: false});
+      this.setState ({projectDeletePrompt: false});
+      this.setState ({itemEditForm: false});
    }
 
    closeItemDeletePrompt() {
-      //
+      this.setState ({itemDeletePrompt: false});
+      this.setState ({targetItem: 0});
+   }
+
+   deleteItem () {
+      this.props.project.eraseItem (this.state.targetItem);
+      this.closeItemDeletePrompt();
    }
 
    render() {
@@ -236,7 +246,7 @@ class ProjectView extends React.Component {
       }, this);
 
       // Create warning prompt for project deletion
-      const deletePrompt = "Are you sure you want to delete project '" + this.props.project.getTitle() + "'? (There is no undo)";
+      const projectDeletePrompt = "Are you sure you want to delete project '" + this.props.project.getTitle() + "'? (There is no undo)";
 
       return (
          <>
@@ -257,8 +267,9 @@ class ProjectView extends React.Component {
             {listItems}
             {this.state.itemForm && <ItemForm onCreate={this.closeItemForm} onCancel={this.closeItemForm} projectID={this.props.project.getID()} />}
             {this.state.projectEditForm && <ProjectEditForm onEdit={this.closeProjectEditForm} onCancel={this.closeProjectEditForm} project={this.props.project} />}
-            {this.state.projectDeletePrompt && <ConfirmationPrompt prompt={deletePrompt} onAccept={this.deleteProject} onCancel={this.closeProjectDeletePrompt} />}
+            {this.state.projectDeletePrompt && <ConfirmationPrompt prompt={projectDeletePrompt} onAccept={this.deleteProject} onCancel={this.closeProjectDeletePrompt} />}
             {this.state.itemEditForm && <ItemEditForm item={this.props.project.getItem (this.state.targetItem)} onEdit={this.closeItemEditForm} onCancel={this.closeItemEditForm} />}
+            {this.state.itemDeletePrompt && <ConfirmationPrompt prompt={"Are you sure you want to delete item '" + this.props.project.getItem (this.state.targetItem).getTitle() + "'? (There is no undo)"} onAccept={this.deleteItem} onCancel={this.closeItemDeletePrompt} />}
          </>
       );
    }
@@ -291,8 +302,6 @@ class ProjectCard extends React.Component {
 // Shows item textbox and title, options when hovered, details when selected
 class ItemCard extends React.Component {
    /* TODO
-      - Add onclick() to expand/minimize item details + show options
-      - Add options when hovering
       - Finalize CSS
    */
 
@@ -316,7 +325,7 @@ class ItemCard extends React.Component {
                <span className="stay-right">&#8942;</span>
                <div className="options-menu-items">
                   <span onClick={() => {this.props.onItemEdit (this.props.item.getID())}}>Edit item</span>
-                  <span onClick={this.props.onItemDelete}>Delete item</span>
+                  <span onClick={() => {this.props.onItemDelete (this.props.item.getID())}}>Delete item</span>
                </div>
             </div>
             <ul className={infoClass}>
@@ -483,7 +492,7 @@ class ConfirmationPrompt extends React.Component {
       return (
          <div className="confirmation-prompt">
             <p>{this.props.prompt}</p>
-            <button onClick={this.props.onAccept}>Save</button>
+            <button onClick={this.props.onAccept}>Accept</button>
             <button onClick={this.props.onCancel}>Cancel</button>
          </div>
       );
