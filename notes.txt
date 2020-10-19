@@ -1,0 +1,32 @@
+TODO (heh)
+-----
+- ItemCard components show priotity attribute as integer; decide whether to parse int or save as text or enum
+- View that shows a list of all items
+   - Might want to reqrite functionality to edit and delete item into ItemCard component instead of keeping as part of ProjectView
+- Create the option to sort items by different criteria
+- Create app settings menu
+- Create checkboxes for items to toggle their completion status
+- Create option to view project completion status
+- Look into themes
+- Create option to erase all projects from app settings menu
+- Need more settings?
+- Create functionality to save
+   - Save automatically when creating, editing or deleting projects or items, or changing settings
+- Create functionality to load saved data
+   - Load automatically when app startup if saved data found
+- Finalize CSS
+- More testing (all the testing)
+- ? (Move on if sanity says we're done with this project)
+- Rewrite README.MD
+- Publish to Heroku
+- Celebrate with hot chocolate
+
+NOTES
+-----
+- ui.js -> ProjectView component:
+   - All the different states related to the different forms can be compressed into a single state to keep an int or an enum indicating which form should be visible, if any
+- Remember to review "TEST STUFF" at top of ui.js
+   - AppManager is being run as a test instance
+- React is pretty cool, see if others have come up with better ways of doing what I've done here
+- Look into offline functionality for React (might be useful)
+- Wasn't there a way to make mobile apps using React?
