@@ -316,7 +316,25 @@ class ItemCard extends React.Component {
    }
 
    render() {
+      // Whether the card is expanded to show detailed information
       const infoClass = this.state.expanded ? "item-info-expanded" : "item-info-collapsed";
+
+      // Priority
+      let priorityText = "";
+      switch (this.props.item.getPriority()) {
+         default:
+            priorityText = "Undefined";
+            break;
+         case "0":
+            priorityText = "Low";
+            break;
+         case "1":
+            priorityText = "Moderate";
+            break;
+         case "2":
+            priorityText = "High";
+            break;
+      }
 
       return (
          <div className="item-card" onClick={this.toggleExpanded}>
@@ -339,7 +357,7 @@ class ItemCard extends React.Component {
                </li>
                <li>
                   <span className="item-info-label">Priority: </span>
-                  {this.props.item.getPriority()}
+                  {priorityText}
                </li>
             </ul>
          </div>
