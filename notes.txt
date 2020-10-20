@@ -22,8 +22,6 @@ TODO (heh)
 
 NOTES
 -----
-- ui.js -> ProjectView component:
-   - All the different states related to the different forms can be compressed into a single state to keep an int or an enum indicating which form should be visible, if any
 - Remember to review "TEST STUFF" at top of ui.js
    - AppManager is being run as a test instance
 - React is pretty cool, see if others have come up with better ways of doing what I've done here

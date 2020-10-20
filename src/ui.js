@@ -131,23 +131,28 @@ class ProjectView extends React.Component {
       - Finalize CSS
    */
 
+   /*
+      -- Floating menu --
+
+      0. Not visible
+      1. Item form
+      2. Project edit form
+      3. Project delete form
+      4. Item edit form
+      5. Item delete form
+   */
+
    constructor (props) {
       super (props);
       this.state = {
-         itemForm: false,
-         projectEditForm: false,
-         projectDeletePrompt: false,
-         itemEditForm : false,
-         itemDeletePrompt : false,
+         floatingMenu: 0,
          targetItem : 0
       };
       this.linkBackClick = this.linkBackClick.bind (this);
+      this.closeFloatingMenu = this.closeFloatingMenu.bind (this);
       this.openItemForm = this.openItemForm.bind (this);
-      this.closeItemForm = this.closeItemForm.bind (this);
       this.openProjectEditForm = this.openProjectEditForm.bind (this);
-      this.closeProjectEditForm = this.closeProjectEditForm.bind (this);
       this.openProjectDeletePrompt = this.openProjectDeletePrompt.bind (this);
-      this.closeProjectDeletePrompt = this.closeProjectDeletePrompt.bind (this);
       this.deleteProject = this.deleteProject.bind (this);
       this.openItemEditForm = this.openItemEditForm.bind (this);
       this.closeItemEditForm = this.closeItemEditForm.bind (this);
@@ -160,40 +165,20 @@ class ProjectView extends React.Component {
       this.props.linkBack();
    }
 
-   openItemForm() {
-      this.setState ({itemForm: true});
-      this.setState ({projectEditForm: false});
-      this.setState ({projectDeletePrompt: false});
-      this.setState ({itemEditForm: false});
-      this.setState ({itemDeletePrompt : false});
+   closeFloatingMenu() {
+      this.setState ({floatingMenu: 0});
    }
 
-   closeItemForm() {
-      this.setState ({itemForm: false});
+   openItemForm() {
+      this.setState ({floatingMenu: 1});
    }
 
    openProjectEditForm() {
-      this.setState ({projectEditForm: true});
-      this.setState ({itemForm: false});
-      this.setState ({projectDeletePrompt: false});
-      this.setState ({itemEditForm: false});
-      this.setState ({itemDeletePrompt : false});
-   }
-
-   closeProjectEditForm() {
-      this.setState ({projectEditForm: false});
+      this.setState ({floatingMenu: 2});
    }
 
    openProjectDeletePrompt() {
-      this.setState ({projectDeletePrompt: true});
-      this.setState ({itemForm: false});
-      this.setState ({projectEditForm: false});
-      this.setState ({itemEditForm: false});
-      this.setState ({itemDeletePrompt : false});
-   }
-
-   closeProjectDeletePrompt() {
-      this.setState ({projectDeletePrompt: false});
+      this.setState ({floatingMenu: 3});
    }
 
    deleteProject() {
@@ -203,29 +188,21 @@ class ProjectView extends React.Component {
 
    openItemEditForm (itemID) {
       this.setState ({targetItem : itemID});
-      this.setState ({itemEditForm : true});
-      this.setState ({itemForm : false});
-      this.setState ({projectEditForm : false});
-      this.setState ({projectDeletePrompt : false});
-      this.setState ({itemDeletePrompt : false});
+      this.setState ({floatingMenu : 4});
    }
 
    closeItemEditForm() {
-      this.setState ({itemEditForm: false});
+      this.closeFloatingMenu();
       this.setState ({targetItem: 0});
    }
 
    openItemDeletePrompt (itemID) {
       this.setState ({targetItem : itemID});
-      this.setState ({itemDeletePrompt: true});
-      this.setState ({itemForm: false});
-      this.setState ({projectEditForm: false});
-      this.setState ({projectDeletePrompt: false});
-      this.setState ({itemEditForm: false});
+      this.setState ({floatingMenu: 5});
    }
 
    closeItemDeletePrompt() {
-      this.setState ({itemDeletePrompt: false});
+      this.closeFloatingMenu();
       this.setState ({targetItem: 0});
    }
 
@@ -248,6 +225,29 @@ class ProjectView extends React.Component {
       // Create warning prompt for project deletion
       const projectDeletePrompt = "Are you sure you want to delete project '" + this.props.project.getTitle() + "'? (There is no undo)";
 
+      // Whether a floating menu should be visible
+      let floatingMenu = null;
+      switch (this.state.floatingMenu) {
+         default:
+         case 0:
+            break;
+         case 1:
+            floatingMenu = <ItemForm onCreate={this.closeFloatingMenu} onCancel={this.closeFloatingMenu} projectID={this.props.project.getID()} />;
+            break;
+         case 2:
+            floatingMenu = <ProjectEditForm onEdit={this.closeFloatingMenu} onCancel={this.closeFloatingMenu} project={this.props.project} />;
+            break;
+         case 3:
+            floatingMenu = <ConfirmationPrompt prompt={projectDeletePrompt} onAccept={this.deleteProject} onCancel={this.closeFloatingMenu} />;
+            break;
+         case 4:
+            floatingMenu = <ItemEditForm item={this.props.project.getItem (this.state.targetItem)} onEdit={this.closeItemEditForm} onCancel={this.closeItemEditForm} />;
+            break;
+         case 5:
+            floatingMenu = <ConfirmationPrompt prompt={"Are you sure you want to delete item '" + this.props.project.getItem (this.state.targetItem).getTitle() + "'? (There is no undo)"} onAccept={this.deleteItem} onCancel={this.closeItemDeletePrompt} />;
+            break;
+      }
+
       return (
          <>
             <h3 className="link-to-projects" onClick={this.linkBackClick}>&lt; Projects</h3>
@@ -265,11 +265,7 @@ class ProjectView extends React.Component {
                </span>
             </h2>
             {listItems}
-            {this.state.itemForm && <ItemForm onCreate={this.closeItemForm} onCancel={this.closeItemForm} projectID={this.props.project.getID()} />}
-            {this.state.projectEditForm && <ProjectEditForm onEdit={this.closeProjectEditForm} onCancel={this.closeProjectEditForm} project={this.props.project} />}
-            {this.state.projectDeletePrompt && <ConfirmationPrompt prompt={projectDeletePrompt} onAccept={this.deleteProject} onCancel={this.closeProjectDeletePrompt} />}
-            {this.state.itemEditForm && <ItemEditForm item={this.props.project.getItem (this.state.targetItem)} onEdit={this.closeItemEditForm} onCancel={this.closeItemEditForm} />}
-            {this.state.itemDeletePrompt && <ConfirmationPrompt prompt={"Are you sure you want to delete item '" + this.props.project.getItem (this.state.targetItem).getTitle() + "'? (There is no undo)"} onAccept={this.deleteItem} onCancel={this.closeItemDeletePrompt} />}
+            {(floatingMenu !== null) && floatingMenu}
          </>
       );
    }
