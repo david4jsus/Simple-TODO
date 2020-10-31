@@ -43,9 +43,13 @@ class AppContent extends React.Component {
 
    constructor (props) {
       super (props);
+      this.state = {
+         view: "main_view",
+         project: null
+      };
       this.enterProject = this.enterProject.bind (this);
       this.enterMainView = this.enterMainView.bind (this);
-      this.state = {view: "main_view", project: null};
+      this.enterAllItemsView = this.enterAllItemsView.bind (this);
    }
 
    enterProject (targetProject) {
@@ -58,14 +62,22 @@ class AppContent extends React.Component {
       this.setState ({project: null});
    }
 
+   enterAllItemsView() {
+      this.setState ({view: "all_items_view"});
+      this.setState ({project: null});
+   }
+
    render() {
       return (
          <div className="app-content">
             {this.state.view === "main_view" &&
-               <MainView projectClick={this.enterProject}/>
+               <MainView projectClick={this.enterProject} allItemsClick={this.enterAllItemsView} />
             }
             {this.state.view === "project_view" &&
                <ProjectView project={this.state.project} linkBack={this.enterMainView} />
+            }
+            {this.state.view === "all_items_view" &&
+               <AllItemsView linkBack={this.enterMainView} />
             }
          </div>
       );
@@ -117,7 +129,7 @@ class MainView extends React.Component {
 
       return (
          <>
-            <h2>Projects<span className="stay-right"><button className="circle-button" onClick={this.openProjectForm}>+</button> | All items</span></h2>
+            <h2>Projects<span className="stay-right"><button className="circle-button" onClick={this.openProjectForm}>+</button> | <button className="circle-button" onClick={this.props.allItemsClick}>All items</button></span></h2>
             {listProjects}
             {this.state.projectForm && <ProjectForm onCreate={this.closeProjectForm} onCancel={this.closeProjectForm} />}
          </>
@@ -138,15 +150,14 @@ class ProjectView extends React.Component {
       1. Item form
       2. Project edit form
       3. Project delete form
-      4. Item edit form
-      5. Item delete form
    */
 
    constructor (props) {
       super (props);
       this.state = {
          floatingMenu: 0,
-         targetItem : 0
+         targetItem : 0,
+         refresh: 0
       };
       this.linkBackClick = this.linkBackClick.bind (this);
       this.closeFloatingMenu = this.closeFloatingMenu.bind (this);
@@ -154,11 +165,7 @@ class ProjectView extends React.Component {
       this.openProjectEditForm = this.openProjectEditForm.bind (this);
       this.openProjectDeletePrompt = this.openProjectDeletePrompt.bind (this);
       this.deleteProject = this.deleteProject.bind (this);
-      this.openItemEditForm = this.openItemEditForm.bind (this);
-      this.closeItemEditForm = this.closeItemEditForm.bind (this);
-      this.openItemDeletePrompt = this.openItemDeletePrompt.bind (this);
-      this.closeItemDeletePrompt = this.closeItemDeletePrompt.bind (this);
-      this.deleteItem = this.deleteItem.bind (this);
+      this.refreshView = this.refreshView.bind (this);
    }
 
    linkBackClick() {
@@ -186,29 +193,8 @@ class ProjectView extends React.Component {
       appManager.removeProject (this.props.project.getID());
    }
 
-   openItemEditForm (itemID) {
-      this.setState ({targetItem : itemID});
-      this.setState ({floatingMenu : 4});
-   }
-
-   closeItemEditForm() {
-      this.closeFloatingMenu();
-      this.setState ({targetItem: 0});
-   }
-
-   openItemDeletePrompt (itemID) {
-      this.setState ({targetItem : itemID});
-      this.setState ({floatingMenu: 5});
-   }
-
-   closeItemDeletePrompt() {
-      this.closeFloatingMenu();
-      this.setState ({targetItem: 0});
-   }
-
-   deleteItem () {
-      this.props.project.eraseItem (this.state.targetItem);
-      this.closeItemDeletePrompt();
+   refreshView() {
+      this.setState ({refresh: 1});
    }
 
    render() {
@@ -219,7 +205,7 @@ class ProjectView extends React.Component {
          items.push (this.props.project.getItemByIndex (i));
       }
       const listItems = items.map (function (item) {
-         return <ItemCard item={item} key={item.getID()} onItemEdit={this.openItemEditForm} onItemDelete={this.openItemDeletePrompt} />;
+         return <ItemCard item={item} key={item.getID()} refresh={this.refreshView} />;
       }, this);
 
       // Create warning prompt for project deletion
@@ -239,12 +225,6 @@ class ProjectView extends React.Component {
             break;
          case 3:
             floatingMenu = <ConfirmationPrompt prompt={projectDeletePrompt} onAccept={this.deleteProject} onCancel={this.closeFloatingMenu} />;
-            break;
-         case 4:
-            floatingMenu = <ItemEditForm item={this.props.project.getItem (this.state.targetItem)} onEdit={this.closeItemEditForm} onCancel={this.closeItemEditForm} />;
-            break;
-         case 5:
-            floatingMenu = <ConfirmationPrompt prompt={"Are you sure you want to delete item '" + this.props.project.getItem (this.state.targetItem).getTitle() + "'? (There is no undo)"} onAccept={this.deleteItem} onCancel={this.closeItemDeletePrompt} />;
             break;
       }
 
@@ -303,12 +283,36 @@ class ItemCard extends React.Component {
 
    constructor (props) {
       super (props);
-      this.state = {expanded: false};
+      this.state = {
+         expanded: false,
+         floatingMenu: null
+      };
       this.toggleExpanded = this.toggleExpanded.bind (this);
+      this.itemEdit = this.itemEdit.bind (this);
+      this.itemDelete = this.itemDelete.bind (this);
+      this.closeFloatingMenu = this.closeFloatingMenu.bind (this);
+      this.deleteItem = this.deleteItem.bind (this);
    }
 
    toggleExpanded() {
       this.setState ({expanded: !this.state.expanded});
+   }
+
+   itemEdit() {
+      this.setState ({floatingMenu: "itemEdit"});
+   }
+
+   itemDelete() {
+      this.setState ({floatingMenu: "itemDelete"});
+   }
+
+   closeFloatingMenu() {
+      this.setState ({floatingMenu: null});
+   }
+
+   deleteItem() {
+      appManager.removeItemFromProject (this.props.item.getID(), this.props.item.getParentProject());
+      this.props.refresh();
    }
 
    render() {
@@ -332,14 +336,27 @@ class ItemCard extends React.Component {
             break;
       }
 
+      // Floating menus
+      let floatingMenu = null;
+      switch (this.state.floatingMenu) {
+         default:
+            break;
+         case "itemEdit":
+            floatingMenu = <ItemEditForm item={this.props.item} onEdit={this.closeFloatingMenu} onCancel={this.closeFloatingMenu} />;
+            break;
+         case "itemDelete":
+            floatingMenu = <ConfirmationPrompt prompt={"Are you sure you want to delete item '" + this.props.item.getTitle() + "'? (There is no undo)"} onAccept={this.deleteItem} onCancel={this.closeFloatingMenu} />;
+            break;
+      }
+
       return (
          <div className="item-card" onClick={this.toggleExpanded}>
             <span>{this.props.item.getTitle()}</span>
             <div className="options-menu">
                <span className="stay-right">&#8942;</span>
                <div className="options-menu-items">
-                  <span onClick={() => {this.props.onItemEdit (this.props.item.getID())}}>Edit item</span>
-                  <span onClick={() => {this.props.onItemDelete (this.props.item.getID())}}>Delete item</span>
+                  <span onClick={this.itemEdit}>Edit item</span>
+                  <span onClick={this.itemDelete}>Delete item</span>
                </div>
             </div>
             <ul className={infoClass}>
@@ -356,6 +373,7 @@ class ItemCard extends React.Component {
                   {priorityText}
                </li>
             </ul>
+            {(floatingMenu !== null) && floatingMenu}
          </div>
       );
    }
@@ -404,7 +422,7 @@ class ItemForm extends React.Component {
          newTitle: "",
          newDescription: "",
          newDueDate: "",
-         newPriority: ""
+         newPriority: "",
       };
       this.handleTitleChange = this.handleTitleChange.bind (this);
       this.handleDescriptionChange = this.handleDescriptionChange.bind (this);
@@ -582,6 +600,49 @@ class ItemEditForm extends React.Component {
             <button onClick={this.editItem}>Save</button>
             <button onClick={this.props.onCancel}>Cancel</button>
          </div>
+      );
+   }
+}
+
+// Shows a list of all items in all projects
+class AllItemsView extends React.Component {
+
+   constructor (props) {
+      super (props);
+      this.state = {refresh: 0};
+      this.linkBackClick = this.linkBackClick.bind (this);
+      this.refreshView = this.refreshView.bind (this);
+   }
+
+   linkBackClick() {
+      this.props.linkBack();
+   }
+
+   refreshView() {
+      this.setState ({refresh: 1});
+   }
+
+   render() {
+
+      // Create list of TODO items to show
+      const items = [];
+      for (let i = 0; i < appManager.getNumProjects(); i++) {
+         let currentProject = appManager.getProjectByIndex (i);
+         let currentItems = appManager.getItemListFromProject (currentProject.getID());
+         for (let j = 0; j < currentItems.length; j++) {
+            items.push (currentItems[j]);
+         }
+      }
+      const listItems = items.map (function (item) {
+         return <ItemCard item={item} key={item.getID()} refresh={this.refreshView} />;
+      }, this);
+
+      return (
+         <>
+            <h3 className="link-to-projects" onClick={this.linkBackClick}>&lt; Projects</h3>
+            <h2>All Items</h2>
+            {listItems}
+         </>
       );
    }
 }

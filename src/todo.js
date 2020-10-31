@@ -305,15 +305,15 @@ class AppManager {
    }
 
    removeItemFromProject (itemID, projectID) {
-      //
+      this.getProject (projectID).eraseItem (itemID);
    }
 
    getItemFromProject (itemID, projectID) {
-      //
+      return this.getProject (projectID).getItem (itemID);
    }
 
    getItemByIndexFromProject (itemIndex, projectID) {
-      //
+      return this.getProject (projectID).getItemByIndex (itemIndex);
    }
 
    // Get the list of items from a specified project
