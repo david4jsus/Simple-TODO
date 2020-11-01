@@ -198,15 +198,15 @@ class Project {
             break;
          case "dueDateUp":
             this.itemList.sort (function (a, b) {
-               let dateA = new Date (a.dueDate());
-               let dateB = new Date (b.dueDate());
+               let dateA = new Date (a.getDueDate());
+               let dateB = new Date (b.getDueDate());
                return dateA.getTime() - dateB.getTime();
             });
             break;
          case "dueDateDown":
             this.itemList.sort (function (a, b) {
-               let dateA = new Date (a.dueDate());
-               let dateB = new Date (b.dueDate());
+               let dateA = new Date (a.getDueDate());
+               let dateB = new Date (b.getDueDate());
                return dateB.getTime() - dateA.getTime();
             });
             break;
@@ -324,6 +324,13 @@ class AppManager {
 
       // Return the item list
       return project.itemList;
+   }
+
+   // Reorganize items in each project list by changing the sorting method
+   changeSortMethod (criterion) {
+      for (let i = 0; i < this.getNumProjects(); i++) {
+         this.getProjectByIndex (i).sortItemsBy (criterion);
+      }
    }
 }
 

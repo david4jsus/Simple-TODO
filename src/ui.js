@@ -234,6 +234,7 @@ class ProjectView extends React.Component {
             <h2>
                {this.props.project.getTitle()}
                <span className="stay-right">
+                  <SortSelect refresh={this.refreshView} />
                   <span className="circle-button" onClick={this.openItemForm}>+</span>
                   <div className="options-menu">
                      <span className="circle-button">&#8942;</span>
@@ -643,6 +644,37 @@ class AllItemsView extends React.Component {
             <h2>All Items</h2>
             {listItems}
          </>
+      );
+   }
+}
+
+// Allow sorting of items in a page based on different criteria
+class SortSelect extends React.Component {
+
+   constructor (props) {
+      super (props);
+      this.state = {sort: "creationUp"};
+      this.handleSortChange = this.handleSortChange.bind (this);
+   }
+
+   handleSortChange (evt) {
+      this.setState ({sort: evt.target.value});
+      appManager.changeSortMethod (evt.target.value);
+      this.props.refresh();
+   }
+
+   render() {
+      return (
+         <span>
+            Sort by <select className="sort-select" value={this.state.sort} onChange={this.handleSortChange}>
+               <option value="creationUp">order of creation &uarr;</option>
+               <option value="creationDown">order of creation &darr;</option>
+               <option value="priorityUp">item priority &uarr;</option>
+               <option value="priorityDown">item priority &darr;</option>
+               <option value="dueDateUp">due date &uarr;</option>
+               <option value="dueDateDown">due date &darr;</option>
+            </select>
+         </span>
       );
    }
 }
