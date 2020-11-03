@@ -45,11 +45,13 @@ class AppContent extends React.Component {
       super (props);
       this.state = {
          view: "main_view",
-         project: null
+         project: null,
+         sortMethod: "creationUp"
       };
       this.enterProject = this.enterProject.bind (this);
       this.enterMainView = this.enterMainView.bind (this);
       this.enterAllItemsView = this.enterAllItemsView.bind (this);
+      this.updateSortMethod = this.updateSortMethod.bind (this);
    }
 
    enterProject (targetProject) {
@@ -67,6 +69,10 @@ class AppContent extends React.Component {
       this.setState ({project: null});
    }
 
+   updateSortMethod (method) {
+      this.setState ({sortMethod: method});
+   }
+
    render() {
       return (
          <div className="app-content">
@@ -74,10 +80,10 @@ class AppContent extends React.Component {
                <MainView projectClick={this.enterProject} allItemsClick={this.enterAllItemsView} />
             }
             {this.state.view === "project_view" &&
-               <ProjectView project={this.state.project} linkBack={this.enterMainView} />
+               <ProjectView project={this.state.project} linkBack={this.enterMainView} sortMethod={this.state.sortMethod} updateSortMethod={this.updateSortMethod} />
             }
             {this.state.view === "all_items_view" &&
-               <AllItemsView linkBack={this.enterMainView} />
+               <AllItemsView linkBack={this.enterMainView} sortMethod={this.state.sortMethod} updateSortMethod={this.updateSortMethod} />
             }
          </div>
       );
@@ -109,7 +115,9 @@ class MainView extends React.Component {
 
    constructor (props) {
       super (props);
-      this.state = {projectForm: false};
+      this.state = {
+         projectForm: false
+      };
       this.openProjectForm = this.openProjectForm.bind (this);
       this.closeProjectForm = this.closeProjectForm.bind (this);
    }
@@ -157,6 +165,7 @@ class ProjectView extends React.Component {
       this.state = {
          floatingMenu: 0,
          targetItem : 0,
+         sortMethod: props.sortMethod,
          refresh: 0
       };
       this.linkBackClick = this.linkBackClick.bind (this);
@@ -165,7 +174,6 @@ class ProjectView extends React.Component {
       this.openProjectEditForm = this.openProjectEditForm.bind (this);
       this.openProjectDeletePrompt = this.openProjectDeletePrompt.bind (this);
       this.deleteProject = this.deleteProject.bind (this);
-      this.refreshView = this.refreshView.bind (this);
    }
 
    linkBackClick() {
@@ -191,10 +199,6 @@ class ProjectView extends React.Component {
    deleteProject() {
       this.props.linkBack();
       appManager.removeProject (this.props.project.getID());
-   }
-
-   refreshView() {
-      this.setState ({refresh: 1});
    }
 
    render() {
@@ -234,7 +238,7 @@ class ProjectView extends React.Component {
             <h2>
                {this.props.project.getTitle()}
                <span className="stay-right">
-                  <SortSelect refresh={this.refreshView} />
+                  <SortSelect sortMethod={this.props.sortMethod} updateSortMethod={this.props.updateSortMethod} />
                   <span className="circle-button" onClick={this.openItemForm}>+</span>
                   <div className="options-menu">
                      <span className="circle-button">&#8942;</span>
@@ -385,7 +389,9 @@ class ProjectForm extends React.Component {
 
    constructor (props) {
       super (props);
-      this.state = {newTitle: ""};
+      this.state = {
+         newTitle: ""
+      };
       this.handleTitleChange = this.handleTitleChange.bind (this);
       this.createProject = this.createProject.bind (this);
    }
@@ -489,7 +495,9 @@ class ProjectEditForm extends React.Component {
 
    constructor (props) {
       super (props);
-      this.state = {newTitle: this.props.project.getTitle()};
+      this.state = {
+         newTitle: this.props.project.getTitle()
+      };
       this.handleTitleChange = this.handleTitleChange.bind (this);
       this.editProject = this.editProject.bind (this);
    }
@@ -610,17 +618,14 @@ class AllItemsView extends React.Component {
 
    constructor (props) {
       super (props);
-      this.state = {refresh: 0};
+      this.state = {
+         refresh: 0
+      };
       this.linkBackClick = this.linkBackClick.bind (this);
-      this.refreshView = this.refreshView.bind (this);
    }
 
    linkBackClick() {
       this.props.linkBack();
-   }
-
-   refreshView() {
-      this.setState ({refresh: 1});
    }
 
    render() {
@@ -641,7 +646,7 @@ class AllItemsView extends React.Component {
       return (
          <>
             <h3 className="link-to-projects" onClick={this.linkBackClick}>&lt; Projects</h3>
-            <h2>All Items</h2>
+            <h2>All Items <span className="stay-right"><SortSelect sortMethod={this.props.sortMethod} updateSortMethod={this.props.updateSortMethod} /></span></h2>
             {listItems}
          </>
       );
@@ -653,14 +658,17 @@ class SortSelect extends React.Component {
 
    constructor (props) {
       super (props);
-      this.state = {sort: "creationUp"};
+      this.state = {
+         sort: props.sortMethod
+      };
       this.handleSortChange = this.handleSortChange.bind (this);
    }
 
    handleSortChange (evt) {
-      this.setState ({sort: evt.target.value});
-      appManager.changeSortMethod (evt.target.value);
-      this.props.refresh();
+      let sortMethod = evt.target.value;
+      this.setState ({sort: sortMethod});
+      appManager.changeSortMethod (sortMethod);
+      this.props.updateSortMethod (sortMethod);
    }
 
    render() {
@@ -684,7 +692,9 @@ class SettingsMenu extends React.Component {
 
    constructor (props) {
       super (props);
-      this.state = {menuOpen: false};
+      this.state = {
+         menuOpen: false
+      };
       this.toggleMenu = this.toggleMenu.bind (this);
    }
 
