@@ -29,7 +29,7 @@ class AppHeader extends React.Component {
    render() {
       return(
          <div className="app-header">
-            <h1>Simple TODO <span className="stay-right">&#9776;</span></h1>
+            <h1>Simple TODO <SettingsMenu /></h1>
          </div>
       );
    }
@@ -675,6 +675,45 @@ class SortSelect extends React.Component {
                <option value="dueDateDown">due date &darr;</option>
             </select>
          </span>
+      );
+   }
+}
+
+// Settings menu
+class SettingsMenu extends React.Component {
+
+   constructor (props) {
+      super (props);
+      this.state = {menuOpen: false};
+      this.toggleMenu = this.toggleMenu.bind (this);
+   }
+
+   toggleMenu() {
+      this.setState ({menuOpen: !this.state.menuOpen});
+   }
+
+   render() {
+
+      // Whether the menu is open
+      let menuOpen = this.state.menuOpen ? {right: "0"} : {right: "-375px"};
+
+      return (
+         <>
+            <span className="settings-button" onClick={this.toggleMenu}>&#9776;</span>
+            <div className="settings-menu" style={menuOpen}>
+               <h4>Settings <span className="settings-button" onClick={this.toggleMenu}>X</span></h4>
+               <br />
+               <label htmlFor="settingsTheme">Theme:</label>
+               <select id="settingsTheme">
+                  <option value={0}>Theme 0</option>
+               </select>
+               <br />
+               <label htmlFor="settingsCompletion">Show completion status (percentage) for projects:</label>
+               <input id="settingsCompletion" type="checkbox" />
+               <br />
+               <button>Erase all project data</button>
+            </div>
+         </>
       );
    }
 }

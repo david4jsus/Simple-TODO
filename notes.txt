@@ -1,7 +1,8 @@
 TODO (heh)
 -----
-- Create the option to sort items by different criteria
 - Create app settings menu
+- Create the option to sort items by different criteria on "all items" view
+   - Need to store the state of the sort
 - Create checkboxes for items to toggle their completion status
 - Create option to view project completion status
 - Look into themes
