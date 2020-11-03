@@ -290,13 +290,15 @@ class ItemCard extends React.Component {
       super (props);
       this.state = {
          expanded: false,
-         floatingMenu: null
+         floatingMenu: null,
+         checked: props.item.getIsCompleted()
       };
       this.toggleExpanded = this.toggleExpanded.bind (this);
       this.itemEdit = this.itemEdit.bind (this);
       this.itemDelete = this.itemDelete.bind (this);
       this.closeFloatingMenu = this.closeFloatingMenu.bind (this);
       this.deleteItem = this.deleteItem.bind (this);
+      this.toggleCompletion = this.toggleCompletion.bind (this);
    }
 
    toggleExpanded() {
@@ -318,6 +320,11 @@ class ItemCard extends React.Component {
    deleteItem() {
       appManager.removeItemFromProject (this.props.item.getID(), this.props.item.getParentProject());
       this.props.refresh();
+   }
+
+   toggleCompletion() {
+      this.props.item.toggleCompletedStatus();
+      this.setState ({checked: this.props.item.getIsCompleted()});
    }
 
    render() {
@@ -356,7 +363,7 @@ class ItemCard extends React.Component {
 
       return (
          <div className="item-card" onClick={this.toggleExpanded}>
-            <span>{this.props.item.getTitle()}</span>
+            <span><input type="checkbox" checked={this.state.checked} onChange={this.toggleCompletion} />{this.props.item.getTitle()}</span>
             <div className="options-menu">
                <span className="stay-right">&#8942;</span>
                <div className="options-menu-items">

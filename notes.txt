@@ -1,6 +1,5 @@
 TODO (heh)
 -----
-- Create checkboxes for items to toggle their completion status
 - Create option to view project completion status
 - Look into themes
 - Create option to erase all projects from app settings menu
