@@ -1,6 +1,5 @@
 TODO (heh)
 -----
-- Create option to view project completion status
 - Look into themes
 - Create option to erase all projects from app settings menu
 - Need more settings?

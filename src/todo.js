@@ -153,16 +153,18 @@ class Project {
 
    // Get percentage of items completed in this project
    getCompletionStatus() {
-      if (this.getNumItems <= 0) {
+
+      let numItems = this.getNumItems();
+
+      if (numItems <= 0) {
          return "Empty";
       } else {
          // Keep track of how many items in this project are completed
-         let numItems = this.getNumItems;
          let completedItems = 0;
 
          // Iterate through list of items to find out how many items are completed
          for (let i = 0; i < numItems; i++) {
-            if (this.getItem (i).isCompleted) {
+            if (this.getItemByIndex (i).getIsCompleted()) {
                completedItems++;
             }
          }

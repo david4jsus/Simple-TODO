@@ -165,7 +165,6 @@ class ProjectView extends React.Component {
       this.state = {
          floatingMenu: 0,
          targetItem : 0,
-         sortMethod: props.sortMethod,
          refresh: 0
       };
       this.linkBackClick = this.linkBackClick.bind (this);
@@ -174,6 +173,7 @@ class ProjectView extends React.Component {
       this.openProjectEditForm = this.openProjectEditForm.bind (this);
       this.openProjectDeletePrompt = this.openProjectDeletePrompt.bind (this);
       this.deleteProject = this.deleteProject.bind (this);
+      this.refreshView = this.refreshView.bind (this);
    }
 
    linkBackClick() {
@@ -199,6 +199,10 @@ class ProjectView extends React.Component {
    deleteProject() {
       this.props.linkBack();
       appManager.removeProject (this.props.project.getID());
+   }
+
+   refreshView() {
+      this.setState ({refresh: 1});
    }
 
    render() {
@@ -236,7 +240,7 @@ class ProjectView extends React.Component {
          <>
             <h3 className="link-to-projects" onClick={this.linkBackClick}>&lt; Projects</h3>
             <h2>
-               {this.props.project.getTitle()}
+               {this.props.project.getTitle()} ({this.props.project.getCompletionStatus()})
                <span className="stay-right">
                   <SortSelect sortMethod={this.props.sortMethod} updateSortMethod={this.props.updateSortMethod} />
                   <span className="circle-button" onClick={this.openItemForm}>+</span>
@@ -325,6 +329,7 @@ class ItemCard extends React.Component {
    toggleCompletion() {
       this.props.item.toggleCompletedStatus();
       this.setState ({checked: this.props.item.getIsCompleted()});
+      this.props.refresh();
    }
 
    render() {
@@ -629,10 +634,15 @@ class AllItemsView extends React.Component {
          refresh: 0
       };
       this.linkBackClick = this.linkBackClick.bind (this);
+      this.refreshView = this.refreshView.bind (this);
    }
 
    linkBackClick() {
       this.props.linkBack();
+   }
+
+   refreshView() {
+      this.setState ({refresh: 1});
    }
 
    render() {
