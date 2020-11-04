@@ -334,6 +334,13 @@ class AppManager {
          this.getProjectByIndex (i).sortItemsBy (criterion);
       }
    }
+
+   // Delete all projects and their data
+   eraseProjectData() {
+      while (this.getNumProjects() > 0) {
+         this.removeProject (this.getProjectByIndex (0).getID());
+      }
+   }
 }
 
 export {Item, Project, AppManager};

@@ -1,13 +1,15 @@
 TODO (heh)
 -----
-- Look into themes
-- Create option to erase all projects from app settings menu
-- Need more settings?
+- Setting: Visibility of completion status for projects
 - Create functionality to save
    - Save automatically when creating, editing or deleting projects or items, or changing settings
-- Create functionality to load saved data
+   - Create functionality to load saved data
    - Load automatically when app startup if saved data found
 - Finalize CSS
+- Setting: Theme selector
+   - Design themes
+   - CSS --> :root { --my-color: #f06d06; }
+   - JS  --> document.documentElement.style.setProperty("--my-color", this.value);
 - More testing (all the testing)
 - ? (Move on if sanity says we're done with this project)
 - Rewrite README.MD

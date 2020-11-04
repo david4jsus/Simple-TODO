@@ -117,6 +117,7 @@ body {
    border-radius: 10px;
    background-color: #cccccc;
    box-shadow: 5px 5px 16px grey;
+   color: black;
 }
 
 .sort-select {
@@ -125,7 +126,10 @@ body {
 
 .settings-button {
    cursor: pointer;
-   float: right;
+   position: fixed;
+   top: 30px;
+   right: 20px;
+   font-size: 40px;
 }
 
 .settings-menu {

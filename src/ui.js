@@ -9,14 +9,16 @@ var appManager = new AppManager();
 //====================//
 
 // Renders the web app (back to root node)
-function App() {
-   return (
-      <>
-         <AppHeader />
-         <AppContent />
-         <AppFooter />
-      </>
-  );
+class App extends React.Component {
+   render () {
+      return (
+         <>
+            <AppHeader />
+            <AppContent />
+            <AppFooter />
+         </>
+      );
+  }
 }
 
 // Web app title and settings
@@ -29,7 +31,7 @@ class AppHeader extends React.Component {
    render() {
       return(
          <div className="app-header">
-            <h1>Simple TODO <SettingsMenu /></h1>
+            <h1>Simple TODO</h1>
          </div>
       );
    }
@@ -46,7 +48,7 @@ class AppContent extends React.Component {
       this.state = {
          view: "main_view",
          project: null,
-         sortMethod: "creationUp"
+         sortMethod: "creationUp",
       };
       this.enterProject = this.enterProject.bind (this);
       this.enterMainView = this.enterMainView.bind (this);
@@ -76,6 +78,7 @@ class AppContent extends React.Component {
    render() {
       return (
          <div className="app-content">
+            <SettingsMenu refresh={this.enterMainView} />
             {this.state.view === "main_view" &&
                <MainView projectClick={this.enterProject} allItemsClick={this.enterAllItemsView} />
             }
@@ -710,13 +713,31 @@ class SettingsMenu extends React.Component {
    constructor (props) {
       super (props);
       this.state = {
-         menuOpen: false
+         menuOpen: false,
+         eraseDataPrompt: false
       };
       this.toggleMenu = this.toggleMenu.bind (this);
+      this.openEraseDataPrompt = this.openEraseDataPrompt.bind (this);
+      this.closeEraseDataPrompt = this.closeEraseDataPrompt.bind (this);
+      this.eraseData = this.eraseData.bind (this);
    }
 
    toggleMenu() {
       this.setState ({menuOpen: !this.state.menuOpen});
+   }
+
+   openEraseDataPrompt() {
+      this.setState ({eraseDataPrompt: true});
+   }
+
+   closeEraseDataPrompt() {
+      this.setState ({eraseDataPrompt: false});
+   }
+
+   eraseData() {
+      appManager.eraseProjectData();
+      this.closeEraseDataPrompt();
+      this.props.refresh();
    }
 
    render() {
@@ -738,7 +759,8 @@ class SettingsMenu extends React.Component {
                <label htmlFor="settingsCompletion">Show completion status (percentage) for projects:</label>
                <input id="settingsCompletion" type="checkbox" />
                <br />
-               <button>Erase all project data</button>
+               <button onClick={this.openEraseDataPrompt}>Erase all project data</button>
+               {this.state.eraseDataPrompt && <ConfirmationPrompt prompt="Are you sure you want to delete all project data? (There is no undo)" onAccept={this.eraseData} onCancel={this.closeEraseDataPrompt} />}
             </div>
          </>
       );
