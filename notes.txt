@@ -1,10 +1,10 @@
 TODO (heh)
 -----
-- Setting: Visibility of completion status for projects
 - Create functionality to save
    - Save automatically when creating, editing or deleting projects or items, or changing settings
    - Create functionality to load saved data
    - Load automatically when app startup if saved data found
+- Setting: Visibility of completion status for projects
 - Finalize CSS
 - Setting: Theme selector
    - Design themes

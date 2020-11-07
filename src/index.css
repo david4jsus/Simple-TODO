@@ -126,10 +126,11 @@ body {
 
 .settings-button {
    cursor: pointer;
-   position: fixed;
+   /*position: fixed;
    top: 30px;
    right: 20px;
-   font-size: 40px;
+   font-size: 40px;*/
+   float: right;
 }
 
 .settings-menu {

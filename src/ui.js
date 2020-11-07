@@ -10,11 +10,29 @@ var appManager = new AppManager();
 
 // Renders the web app (back to root node)
 class App extends React.Component {
+
+   constructor (props) {
+      super (props);
+      this.state = {
+         view: "mainView"
+      };
+      this.updateView = this.updateView.bind (this);
+      this.enterMainView = this.enterMainView.bind (this);
+   }
+
+   updateView (view) {
+      this.setState ({view: view});
+   }
+
+   enterMainView() {
+      this.updateView ("mainView");
+   }
+
    render () {
       return (
          <>
-            <AppHeader />
-            <AppContent />
+            <AppHeader toMainView={this.enterMainView}/>
+            <AppContent view={this.state.view} updateView={this.updateView} />
             <AppFooter />
          </>
       );
@@ -31,7 +49,7 @@ class AppHeader extends React.Component {
    render() {
       return(
          <div className="app-header">
-            <h1>Simple TODO</h1>
+            <h1>Simple TODO<SettingsMenu refresh={this.props.toMainView} /></h1>
          </div>
       );
    }
@@ -46,7 +64,6 @@ class AppContent extends React.Component {
    constructor (props) {
       super (props);
       this.state = {
-         view: "main_view",
          project: null,
          sortMethod: "creationUp",
       };
@@ -57,17 +74,17 @@ class AppContent extends React.Component {
    }
 
    enterProject (targetProject) {
-      this.setState ({view: "project_view"});
+      this.props.updateView ("projectView");
       this.setState ({project: targetProject});
    }
 
    enterMainView() {
-      this.setState ({view: "main_view"});
+      this.props.updateView ("mainView");
       this.setState ({project: null});
    }
 
    enterAllItemsView() {
-      this.setState ({view: "all_items_view"});
+      this.props.updateView ("allItemsView");
       this.setState ({project: null});
    }
 
@@ -78,14 +95,13 @@ class AppContent extends React.Component {
    render() {
       return (
          <div className="app-content">
-            <SettingsMenu refresh={this.enterMainView} />
-            {this.state.view === "main_view" &&
+            {this.props.view === "mainView" &&
                <MainView projectClick={this.enterProject} allItemsClick={this.enterAllItemsView} />
             }
-            {this.state.view === "project_view" &&
+            {this.props.view === "projectView" &&
                <ProjectView project={this.state.project} linkBack={this.enterMainView} sortMethod={this.state.sortMethod} updateSortMethod={this.updateSortMethod} />
             }
-            {this.state.view === "all_items_view" &&
+            {this.props.view === "allItemsView" &&
                <AllItemsView linkBack={this.enterMainView} sortMethod={this.state.sortMethod} updateSortMethod={this.updateSortMethod} />
             }
          </div>
