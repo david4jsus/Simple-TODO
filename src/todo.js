@@ -229,10 +229,10 @@ class AppManager {
    }
 
    // Add a project to the list of projects
-   addProject (newTitle) {
+   addProject (newTitle, id) {
 
       // Create a unique ID for the new project
-      let newID = Date.now();
+      let newID = id === undefined ? Date.now() : id;
 
       // Create project
       let newProject = new Project (newTitle, newID);
@@ -293,10 +293,10 @@ class AppManager {
    }
 
    // Add an item to a project
-   addItem (projectID, newTitle, newDescription, newDueDate, newPriority) {
+   addItem (projectID, newTitle, newDescription, newDueDate, newPriority, id) {
 
-      // Create a unique ID for the new item
-      let newID = Date.now();
+      // Create a unique ID for the new item (copy the given one, if specified)
+      let newID = id === undefined ? Date.now() : id;
 
       // Create new item
       let newItem = new Item (projectID, newTitle, newDescription, newDueDate, newPriority, newID);
@@ -340,6 +340,140 @@ class AppManager {
       while (this.getNumProjects() > 0) {
          this.removeProject (this.getProjectByIndex (0).getID());
       }
+   }
+
+   // Get all current project data as JSON
+   getJSON() {
+
+      // Container for the final object
+      let finalJSON = [];
+
+      // Cycle through all projects
+      for (let i = 0; i < this.getNumProjects(); i++) {
+
+         // Current project
+         let project = this.getProjectByIndex (i);
+
+         // Project container
+         let projectOBJ = {};
+
+         // Project values
+         projectOBJ.title = project.getTitle();
+         projectOBJ.id = project.getID();
+         projectOBJ.items = [];
+
+         // Cycle through all items in the current project
+         for (let j = 0; j < project.getNumItems(); j++) {
+
+            // Current item
+            let item = project.getItemByIndex (j);
+
+            // Item container
+            let itemOBJ = {};
+
+            // Item values
+            itemOBJ.parentProject = item.getParentProject();
+            itemOBJ.id = item.getID();
+            itemOBJ.title = item.getTitle();
+            itemOBJ.description = item.getDescription();
+            itemOBJ.dueDate = item.getDueDate();
+            itemOBJ.priority = item.getPriority();
+            itemOBJ.isCompleted = item.getIsCompleted();
+
+            // Add item container to project container list
+            projectOBJ.items.push (itemOBJ);
+         }
+
+         // Add project container to final object
+         finalJSON.push (projectOBJ);
+      }
+
+      // Return the final object
+      return finalJSON;
+   }
+
+   // Create all project data from a specified JSON object (format is assumed)
+   loadFromJSON (JSON) {
+
+      // Cycle through all projects in JSON
+      for (let i = 0; i < JSON.length; i++) {
+
+         // Current project
+         let project = JSON[i];
+
+         // Add current project
+         this.addProject (project.title, project.id);
+
+         // Cycle through all items in current project
+         for (let j = 0; j < project.items.length; j++) {
+
+            // Current item
+            let item = project.items[j];
+
+            // Add current item
+            this.addItem (item.parentProject, item.title, item.description, item.dueDate, item.priority, item.id);
+
+            // Toggle item completion if item is completed
+            if (item.isCompleted) {
+               this.getProjectByIndex (i).getItemByIndex (j).toggleCompletedStatus();
+            }
+         }
+      }
+   }
+
+   // Save app data
+   saveAppData (itemsToSave) {
+
+      // Save project data
+      if (itemsToSave.projectData) {
+         localStorage.setItem ("STProjectData", JSON.stringify (this.getJSON()));
+      }
+
+      // Sort method
+      if (itemsToSave.sortMethod) {
+         localStorage.setItem ("STSortMethod", itemsToSave.sortMethod);
+      }
+
+      // Theme
+      if (itemsToSave.theme) {
+         localStorage.setItem ("STTheme", itemsToSave.theme);
+      }
+
+      // Option to show the completion status of projects
+      if (itemsToSave.showCompletionStatus) {
+         localStorage.setItem ("STShowCompletionStatus", itemsToSave.showCompletionStatus);
+      }
+   }
+
+   // Load app data
+   loadAppData() {
+
+      // Items to load
+      let sortMethod, theme, showCompletionStatus;
+      sortMethod = theme = showCompletionStatus = null;
+
+      // Project data
+      if (localStorage.getItem ("STProjectData")) {
+         this.loadFromJSON (JSON.parse (localStorage.getItem ("STProjectData")));
+      }
+
+      // Sort method
+      if (localStorage.getItem ("STSortMethod")) {
+         sortMethod = localStorage.getItem ("STSortMethod");
+      }
+
+      // Theme
+      if (localStorage.getItem ("STTheme")) {
+         theme = localStorage.getItem ("STTheme");
+      }
+
+      // Option to show the completion status of projects
+      if (localStorage.getItem ("STShowCompletionStatus")) {
+         showCompletionStatus = localStorage.getItem ("STShowCompletionStatus");
+      }
+
+      // Return the things to load
+      return {sortMethod, theme, showCompletionStatus};
    }
 }
 

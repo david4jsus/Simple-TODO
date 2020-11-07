@@ -1,15 +1,13 @@
 TODO (heh)
 -----
-- Create functionality to save
-   - Save automatically when creating, editing or deleting projects or items, or changing settings
-   - Create functionality to load saved data
-   - Load automatically when app startup if saved data found
 - Setting: Visibility of completion status for projects
+   - Save/Load
 - Finalize CSS
 - Setting: Theme selector
    - Design themes
    - CSS --> :root { --my-color: #f06d06; }
    - JS  --> document.documentElement.style.setProperty("--my-color", this.value);
+   - Save/Load
 - More testing (all the testing)
 - ? (Move on if sanity says we're done with this project)
 - Rewrite README.MD

@@ -14,10 +14,23 @@ class App extends React.Component {
    constructor (props) {
       super (props);
       this.state = {
-         view: "mainView"
+         view: "mainView",
+         sortMethod: "creationUp",
+         theme: 0,
+         showCompletionStatus: false
       };
       this.updateView = this.updateView.bind (this);
       this.enterMainView = this.enterMainView.bind (this);
+   }
+
+   componentDidMount() {
+      let settings = appManager.loadAppData();
+      this.setState ({
+         sortMethod: settings.sortMethod === null ? "creationUp" : settings.sortMethod,
+         theme: settings.theme === null ? 0 : settings.theme,
+         showCompletionStatus: settings.showCompletionStatus === null ? false : settings.showCompletionStatus
+      });
+      console.log (settings);
    }
 
    updateView (view) {
@@ -28,11 +41,47 @@ class App extends React.Component {
       this.updateView ("mainView");
    }
 
+   saveAppData (items) {
+
+      // List of changes to save
+      let itemsToSave = {};
+
+      // Modified items
+      let projectData = items.projectData;
+      let sortMethod = items.sortMethod;
+      let theme = items.theme;
+      let showCompletionStatus = items.showCompletionStatus;
+
+      // Parse possible modified items
+
+      if (projectData) {
+         itemsToSave.projectData = true;
+      }
+
+      if (sortMethod) {
+         this.setState ({sortMethod: sortMethod});
+         itemsToSave.sortMethod = sortMethod;
+      }
+
+      if (theme) {
+         this.setState ({theme: theme});
+         itemsToSave.theme = theme;
+      }
+
+      if (showCompletionStatus) {
+         this.setState ({showCompletionStatus: showCompletionStatus});
+         itemsToSave.showCompletionStatus = showCompletionStatus;
+      }
+
+      // Request save changes
+      appManager.saveAppData (itemsToSave);
+   }
+
    render () {
       return (
          <>
             <AppHeader toMainView={this.enterMainView}/>
-            <AppContent view={this.state.view} updateView={this.updateView} />
+            <AppContent view={this.state.view} updateView={this.updateView} save={this.saveAppData} />
             <AppFooter />
          </>
       );
@@ -218,6 +267,7 @@ class ProjectView extends React.Component {
    deleteProject() {
       this.props.linkBack();
       appManager.removeProject (this.props.project.getID());
+      appManager.saveAppData ({projectData: true});
    }
 
    refreshView() {
@@ -342,6 +392,7 @@ class ItemCard extends React.Component {
 
    deleteItem() {
       appManager.removeItemFromProject (this.props.item.getID(), this.props.item.getParentProject());
+      appManager.saveAppData ({projectData: true});
       this.props.refresh();
    }
 
@@ -433,6 +484,7 @@ class ProjectForm extends React.Component {
 
    createProject() {
       appManager.addProject (this.state.newTitle);
+      appManager.saveAppData ({projectData: true});
       this.props.onCreate();
    }
 
@@ -487,6 +539,7 @@ class ItemForm extends React.Component {
 
    createItem() {
       appManager.addItem (this.props.projectID, this.state.newTitle, this.state.newDescription, this.state.newDueDate, this.state.newPriority);
+      appManager.saveAppData ({projectData: true});
       this.props.onCreate();
    }
 
@@ -539,6 +592,7 @@ class ProjectEditForm extends React.Component {
 
    editProject() {
       this.props.project.setTitle (this.state.newTitle);
+      appManager.saveAppData ({projectData: true});
       this.props.onEdit();
    }
 
@@ -610,6 +664,7 @@ class ItemEditForm extends React.Component {
       this.props.item.setDescription (this.state.newDescription);
       this.props.item.setDueDate (this.state.newDueDate);
       this.props.item.setPriority (this.state.newPriority);
+      appManager.saveAppData ({projectData: true});
       this.props.onEdit();
    }
 
@@ -752,6 +807,7 @@ class SettingsMenu extends React.Component {
 
    eraseData() {
       appManager.eraseProjectData();
+      appManager.saveAppData ({projectData: true});
       this.closeEraseDataPrompt();
       this.props.refresh();
    }
