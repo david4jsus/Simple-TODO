@@ -440,7 +440,7 @@ class AppManager {
       }
 
       // Option to show the completion status of projects
-      if (itemsToSave.showCompletionStatus) {
+      if (itemsToSave.showCompletionStatus !== undefined) {
          localStorage.setItem ("STShowCompletionStatus", itemsToSave.showCompletionStatus);
       }
    }
@@ -464,12 +464,16 @@ class AppManager {
 
       // Theme
       if (localStorage.getItem ("STTheme")) {
-         theme = localStorage.getItem ("STTheme");
+         theme = parseInt (localStorage.getItem ("STTheme"));
       }
 
       // Option to show the completion status of projects
       if (localStorage.getItem ("STShowCompletionStatus")) {
-         showCompletionStatus = localStorage.getItem ("STShowCompletionStatus");
+         if (localStorage.getItem ("STShowCompletionStatus") === "true") {
+            showCompletionStatus = true;
+         } else {
+            showCompletionStatus = false;
+         }
       }
 
       // Return the things to load

@@ -1,7 +1,5 @@
 TODO (heh)
 -----
-- Setting: Visibility of completion status for projects
-   - Save/Load
 - Finalize CSS
 - Setting: Theme selector
    - Design themes

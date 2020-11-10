@@ -21,6 +21,8 @@ class App extends React.Component {
       };
       this.updateView = this.updateView.bind (this);
       this.enterMainView = this.enterMainView.bind (this);
+      this.saveAppData = this.saveAppData.bind (this);
+      this.updateCompletionStatusVisibility = this.updateCompletionStatusVisibility.bind (this);
    }
 
    componentDidMount() {
@@ -68,7 +70,7 @@ class App extends React.Component {
          itemsToSave.theme = theme;
       }
 
-      if (showCompletionStatus) {
+      if (showCompletionStatus !== undefined) {
          this.setState ({showCompletionStatus: showCompletionStatus});
          itemsToSave.showCompletionStatus = showCompletionStatus;
       }
@@ -77,11 +79,16 @@ class App extends React.Component {
       appManager.saveAppData (itemsToSave);
    }
 
+   updateCompletionStatusVisibility (csv) {
+      this.setState ({showCompletionStatus: csv});
+      this.saveAppData ({showCompletionStatus: csv});
+   }
+
    render () {
       return (
          <>
-            <AppHeader toMainView={this.enterMainView}/>
-            <AppContent view={this.state.view} updateView={this.updateView} save={this.saveAppData} />
+            <AppHeader toMainView={this.enterMainView} completionStatusVisibility={this.state.showCompletionStatus} updateCompletionStatusVisibility={this.updateCompletionStatusVisibility} />
+            <AppContent view={this.state.view} updateView={this.updateView} completionStatusVisibility={this.state.showCompletionStatus} save={this.saveAppData} updateCompletionStatusVisibility={this.updateCompletionStatusVisibility} />
             <AppFooter />
          </>
       );
@@ -98,7 +105,7 @@ class AppHeader extends React.Component {
    render() {
       return(
          <div className="app-header">
-            <h1>Simple TODO<SettingsMenu refresh={this.props.toMainView} /></h1>
+            <h1>Simple TODO<SettingsMenu completionStatusVisibility={this.props.completionStatusVisibility} updateCompletionStatusVisibility={this.props.updateCompletionStatusVisibility} refresh={this.props.toMainView} /></h1>
          </div>
       );
    }
@@ -148,7 +155,7 @@ class AppContent extends React.Component {
                <MainView projectClick={this.enterProject} allItemsClick={this.enterAllItemsView} />
             }
             {this.props.view === "projectView" &&
-               <ProjectView project={this.state.project} linkBack={this.enterMainView} sortMethod={this.state.sortMethod} updateSortMethod={this.updateSortMethod} />
+               <ProjectView project={this.state.project} linkBack={this.enterMainView} sortMethod={this.state.sortMethod} updateSortMethod={this.updateSortMethod} completionStatusVisibility={this.props.completionStatusVisibility} />
             }
             {this.props.view === "allItemsView" &&
                <AllItemsView linkBack={this.enterMainView} sortMethod={this.state.sortMethod} updateSortMethod={this.updateSortMethod} />
@@ -309,7 +316,7 @@ class ProjectView extends React.Component {
          <>
             <h3 className="link-to-projects" onClick={this.linkBackClick}>&lt; Projects</h3>
             <h2>
-               {this.props.project.getTitle()} ({this.props.project.getCompletionStatus()})
+               {this.props.project.getTitle()} {this.props.completionStatusVisibility && "(" + this.props.project.getCompletionStatus() + ")"}
                <span className="stay-right">
                   <SortSelect sortMethod={this.props.sortMethod} updateSortMethod={this.props.updateSortMethod} />
                   <span className="circle-button" onClick={this.openItemForm}>+</span>
@@ -399,6 +406,7 @@ class ItemCard extends React.Component {
    toggleCompletion() {
       this.props.item.toggleCompletedStatus();
       this.setState ({checked: this.props.item.getIsCompleted()});
+      appManager.saveAppData ({projectData: true});
       this.props.refresh();
    }
 
@@ -788,6 +796,7 @@ class SettingsMenu extends React.Component {
          eraseDataPrompt: false
       };
       this.toggleMenu = this.toggleMenu.bind (this);
+      this.toggleCompletionStatusVisibility = this.toggleCompletionStatusVisibility.bind (this);
       this.openEraseDataPrompt = this.openEraseDataPrompt.bind (this);
       this.closeEraseDataPrompt = this.closeEraseDataPrompt.bind (this);
       this.eraseData = this.eraseData.bind (this);
@@ -795,6 +804,10 @@ class SettingsMenu extends React.Component {
 
    toggleMenu() {
       this.setState ({menuOpen: !this.state.menuOpen});
+   }
+
+   toggleCompletionStatusVisibility() {
+      this.props.updateCompletionStatusVisibility (!this.props.completionStatusVisibility);
    }
 
    openEraseDataPrompt() {
@@ -829,7 +842,7 @@ class SettingsMenu extends React.Component {
                </select>
                <br />
                <label htmlFor="settingsCompletion">Show completion status (percentage) for projects:</label>
-               <input id="settingsCompletion" type="checkbox" />
+               <input id="settingsCompletion" type="checkbox" checked={this.props.completionStatusVisibility} onChange={this.toggleCompletionStatusVisibility} />
                <br />
                <button onClick={this.openEraseDataPrompt}>Erase all project data</button>
                {this.state.eraseDataPrompt && <ConfirmationPrompt prompt="Are you sure you want to delete all project data? (There is no undo)" onAccept={this.eraseData} onCancel={this.closeEraseDataPrompt} />}
