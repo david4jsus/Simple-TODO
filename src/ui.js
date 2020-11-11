@@ -23,6 +23,7 @@ class App extends React.Component {
       this.enterMainView = this.enterMainView.bind (this);
       this.saveAppData = this.saveAppData.bind (this);
       this.updateCompletionStatusVisibility = this.updateCompletionStatusVisibility.bind (this);
+      this.updateSortMethod = this.updateSortMethod.bind (this);
    }
 
    componentDidMount() {
@@ -84,11 +85,16 @@ class App extends React.Component {
       this.saveAppData ({showCompletionStatus: csv});
    }
 
+   updateSortMethod (sort) {
+      this.setState ({sortMethod: sort});
+      this.saveAppData ({projectData: true, sortMethod: sort});
+   }
+
    render () {
       return (
          <>
             <AppHeader toMainView={this.enterMainView} completionStatusVisibility={this.state.showCompletionStatus} updateCompletionStatusVisibility={this.updateCompletionStatusVisibility} />
-            <AppContent view={this.state.view} updateView={this.updateView} completionStatusVisibility={this.state.showCompletionStatus} save={this.saveAppData} updateCompletionStatusVisibility={this.updateCompletionStatusVisibility} />
+            <AppContent view={this.state.view} updateView={this.updateView} completionStatusVisibility={this.state.showCompletionStatus} save={this.saveAppData} updateCompletionStatusVisibility={this.updateCompletionStatusVisibility} sortMethod={this.state.sortMethod} updateSortMethod={this.updateSortMethod} />
             <AppFooter />
          </>
       );
@@ -120,13 +126,11 @@ class AppContent extends React.Component {
    constructor (props) {
       super (props);
       this.state = {
-         project: null,
-         sortMethod: "creationUp",
+         project: null
       };
       this.enterProject = this.enterProject.bind (this);
       this.enterMainView = this.enterMainView.bind (this);
       this.enterAllItemsView = this.enterAllItemsView.bind (this);
-      this.updateSortMethod = this.updateSortMethod.bind (this);
    }
 
    enterProject (targetProject) {
@@ -144,10 +148,6 @@ class AppContent extends React.Component {
       this.setState ({project: null});
    }
 
-   updateSortMethod (method) {
-      this.setState ({sortMethod: method});
-   }
-
    render() {
       return (
          <div className="app-content">
@@ -155,10 +155,10 @@ class AppContent extends React.Component {
                <MainView projectClick={this.enterProject} allItemsClick={this.enterAllItemsView} />
             }
             {this.props.view === "projectView" &&
-               <ProjectView project={this.state.project} linkBack={this.enterMainView} sortMethod={this.state.sortMethod} updateSortMethod={this.updateSortMethod} completionStatusVisibility={this.props.completionStatusVisibility} />
+               <ProjectView project={this.state.project} linkBack={this.enterMainView} sortMethod={this.props.sortMethod} updateSortMethod={this.props.updateSortMethod} completionStatusVisibility={this.props.completionStatusVisibility} />
             }
             {this.props.view === "allItemsView" &&
-               <AllItemsView linkBack={this.enterMainView} sortMethod={this.state.sortMethod} updateSortMethod={this.updateSortMethod} />
+               <AllItemsView linkBack={this.enterMainView} sortMethod={this.props.sortMethod} updateSortMethod={this.props.updateSortMethod} />
             }
          </div>
       );
