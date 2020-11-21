@@ -1,5 +1,6 @@
 body {
    font-family: Verdana, Geneva, Tahoma, sans-serif;
+   font-size: 1.1em;
 }
 
 .app-header {
@@ -11,7 +12,12 @@ body {
 }
 
 .app-footer {
-   padding: 5px;
+   position: fixed;
+   left: 0;
+   bottom: 0;
+   width: 100%;
+   padding: 10px;
+   background-color: white;
    text-align: center;
 }
 
@@ -38,6 +44,7 @@ body {
 }
 
 .link-to-projects {
+   padding: 5px;
    border-radius: 10px;
 }
 
@@ -47,7 +54,7 @@ body {
 }
 
 .item-info-expanded {
-   height: 60px;
+   height: 65px;
    overflow-y: hidden;
    transition: ease-in-out 0.3s;
    -moz-transition: ease-in-out 0.3s;
@@ -69,23 +76,41 @@ body {
    float: right;
 }
 
-.circle-button {
-   border-radius: 50%;
+.button {
+   cursor: pointer;
+   padding: 5px;
+   border-radius: 10px;
+}
+
+.button:hover {
+   background-color: #cccccc;
 }
 
 .form {
-   width: 80%;
+   cursor: initial;
+   box-sizing: border-box;
+   width: 86%;
    position: fixed;
-   left: 10%;
+   left: 7%;
    top: 25%;
    border: 1px solid black;
    border-radius: 10px;
    background-color: #cccccc;
+   padding: 15px;
    box-shadow: 5px 5px 16px grey;
+}
+
+.form label {
+   display: inline-block;
+   width: 120px;
 }
 
 .options-menu {
    float: right;
+}
+
+.options-menu:hover .options-menu-items {
+   display: block;
 }
 
 .options-menu-items {
@@ -102,13 +127,16 @@ body {
 .options-menu-items span {
    display: block;
    cursor: pointer;
+   padding: 5px;
+   font-weight: normal;
 }
 
-.options-menu:hover .options-menu-items {
-   display: block;
+.options-menu-items span:hover{
+   background-color: #cccccc;
 }
 
 .confirmation-prompt {
+   cursor: initial;
    width: 80%;
    position: fixed;
    left: 10%;
@@ -116,35 +144,79 @@ body {
    border: 1px solid black;
    border-radius: 10px;
    background-color: #cccccc;
-   box-shadow: 5px 5px 16px grey;
+   padding: 15px;
+   box-shadow: 5px 5px 16px #333333;
    color: black;
 }
 
 .sort-select {
-   /**/
+   font-size: 0.6em;
 }
 
 .settings-button {
    cursor: pointer;
-   /*position: fixed;
-   top: 30px;
-   right: 20px;
-   font-size: 40px;*/
    float: right;
+   padding: 5px;
+   border-radius: 10px;
+}
+
+.settings-button:hover {
+   background-color: #cccccc;
 }
 
 .settings-menu {
    position: fixed;
    top: 0;
    right: 0;
-   width: 325px;
+   width: 425px;
    height: 100%;
-   padding: 20px;
+   padding: 25px;
    border-left: 2px solid white;
    background-color: #333333;
+   font-size: 0.75em;
    color: white;
    transition: ease-in-out 0.3s;
    -moz-transition: ease-in-out 0.3s;
    -o-transition: ease-in-out 0.3s;
    -webkit-transition: ease-in-out 0.3s;
+}
+
+.settings-menu label {
+   display: inline-block;
+   width: 75%;
+   font-weight: normal;
+   font-size: 0.8em;
+}
+
+.settings-menu select {
+   font-size: 0.6em;
+}
+
+.settings-menu input[type="checkbox"] {
+   width: 30px;
+   height: 30px;
+}
+
+.settings-menu button {
+   font-size: 0.6em;
+}
+
+.back-pane {
+   cursor: initial;
+   position: fixed;
+   top: 0;
+   left: 0;
+   width: 100%;
+   height: 100%;
+   background-color: rgba(0, 0, 0, 0.5);
+   animation: fade-in 0.3s ease-in-out;
+}
+
+@keyframes fade-in {
+   0% {
+      opacity: 0;
+   }
+   100% {
+      opacity: 1;
+   }
 }

@@ -167,16 +167,11 @@ class AppContent extends React.Component {
 
 // Footer of the web app (basic info about... idk)
 class AppFooter extends React.Component {
-   /* TODO
-      - I guess put a link to this project on GitHub
-      - Maybe put my name or something idk man
-      - Be creative, what are footers for?
-   */
 
    render() {
       return (
          <div className="app-footer">
-            <span>Footer here</span>
+            <span>Made by <b>David Valenzuela González</b>, see the source code <a href="https://github.com/david4jsus/Simple-TODO">here!</a></span>
          </div>
       );
    }
@@ -184,9 +179,6 @@ class AppFooter extends React.Component {
 
 // List of projects, opening view when opening app
 class MainView extends React.Component {
-   /* TODO
-      - Work on the other components that will be invoked from here
-   */
 
    constructor (props) {
       super (props);
@@ -212,7 +204,7 @@ class MainView extends React.Component {
 
       return (
          <>
-            <h2>Projects<span className="stay-right"><button className="circle-button" onClick={this.openProjectForm}>+</button> | <button className="circle-button" onClick={this.props.allItemsClick}>All items</button></span></h2>
+            <h2>Projects<span className="stay-right"><span className="button" onClick={this.openProjectForm}>+</span> | <span className="button" onClick={this.props.allItemsClick}>All items</span></span></h2>
             {listProjects}
             {this.state.projectForm && <ProjectForm onCreate={this.closeProjectForm} onCancel={this.closeProjectForm} />}
          </>
@@ -319,9 +311,11 @@ class ProjectView extends React.Component {
                {this.props.project.getTitle()} {this.props.completionStatusVisibility && "(" + this.props.project.getCompletionStatus() + ")"}
                <span className="stay-right">
                   <SortSelect sortMethod={this.props.sortMethod} updateSortMethod={this.props.updateSortMethod} />
-                  <span className="circle-button" onClick={this.openItemForm}>+</span>
+                  &nbsp;|&nbsp;
+                  <span className="button" onClick={this.openItemForm}>+</span>
+                  &nbsp;|&nbsp;
                   <div className="options-menu">
-                     <span className="circle-button">&#8942;</span>
+                     <span className="button">&#8942;</span>
                      <div className="options-menu-items">
                         <span onClick={this.openProjectEditForm}>Edit project</span>
                         <span onClick={this.openProjectDeletePrompt}>Delete project</span>
@@ -338,10 +332,6 @@ class ProjectView extends React.Component {
 
 // Shows project title, options when hovered
 class ProjectCard extends React.Component {
-   /* TODO
-      - Add options when hovering
-      - Finalize CSS
-   */
 
    constructor (props) {
       super (props);
@@ -362,9 +352,6 @@ class ProjectCard extends React.Component {
 
 // Shows item textbox and title, options when hovered, details when selected
 class ItemCard extends React.Component {
-   /* TODO
-      - Finalize CSS
-   */
 
    constructor (props) {
       super (props);
@@ -446,12 +433,12 @@ class ItemCard extends React.Component {
 
       return (
          <div className="item-card" onClick={this.toggleExpanded}>
-            <span><input type="checkbox" checked={this.state.checked} onChange={this.toggleCompletion} />{this.props.item.getTitle()}</span>
+            <span><input type="checkbox" checked={this.state.checked} onChange={this.toggleCompletion} onClick={(e) => e.stopPropagation()} />{this.props.item.getTitle()}</span>
             <div className="options-menu">
                <span className="stay-right">&#8942;</span>
                <div className="options-menu-items">
-                  <span onClick={this.itemEdit}>Edit item</span>
-                  <span onClick={this.itemDelete}>Delete item</span>
+                  <span onClick={(e) => {e.stopPropagation(); this.itemEdit()}}>Edit item</span>
+                  <span onClick={(e) => {e.stopPropagation(); this.itemDelete()}}>Delete item</span>
                </div>
             </div>
             <ul className={infoClass}>
@@ -498,15 +485,18 @@ class ProjectForm extends React.Component {
 
    render() {
       return (
-         <div id="newProjectForm" className="form">
-            <h3>New Project</h3>
-            <p>
-               <label htmlFor="newProjectTitle">Title:</label>
-               <input id="newProjectTitle" type="text" placeholder="New Project" value={this.state.newTitle} onChange={this.handleTitleChange} />
-            </p>
-            <button onClick={this.createProject}>Create</button>
-            <button onClick={this.props.onCancel}>Cancel</button>
-         </div>
+         <>
+            <div className="back-pane"></div>
+            <div id="newProjectForm" className="form">
+               <h3>New Project</h3>
+               <p>
+                  <label htmlFor="newProjectTitle">Title:</label>
+                  <input id="newProjectTitle" type="text" placeholder="New Project" value={this.state.newTitle} onChange={this.handleTitleChange} />
+               </p>
+               <button onClick={this.createProject}>Create</button>
+               <button onClick={this.props.onCancel}>Cancel</button>
+            </div>
+         </>
       );
    }
 }
@@ -553,31 +543,34 @@ class ItemForm extends React.Component {
 
    render() {
       return (
-         <div id="newItemForm" className="form">
-            <h3>New TODO Item</h3>
-            <p>
-               <label htmlFor="newItemTitle">Title:</label>
-               <input id="newItemTitle" type="text" placeholder="New TODO Item" value={this.state.newTitle} onChange={this.handleTitleChange} />
-            </p>
-            <p>
-               <label htmlFor="newItemDescription">Description:</label>
-               <input id="newItemDescription" type="text" value={this.state.newDescription} onChange={this.handleDescriptionChange} />
-            </p>
-            <p>
-               <label htmlFor="newItemDueDate">Due Date:</label>
-               <input id="newItemDueDate" type="date" value={this.state.newDueDate} onChange={this.handleDueDateChange} />
-            </p>
-            <p>
-               <label htmlFor="newItemPriority">Priority:</label>
-               <select id="newItemPriority" value={this.state.newPriority} onChange={this.handlePriorityChange}>
-                  <option value="0">Low</option>
-                  <option value="1">Moderate</option>
-                  <option value="2">High</option>
-               </select>
-            </p>
-            <button onClick={this.createItem}>Create</button>
-            <button onClick={this.props.onCancel}>Cancel</button>
-         </div>
+         <>
+            <div className="back-pane"></div>
+            <div id="newItemForm" className="form">
+               <h3>New TODO Item</h3>
+               <p>
+                  <label htmlFor="newItemTitle">Title:</label>
+                  <input id="newItemTitle" type="text" placeholder="New TODO Item" value={this.state.newTitle} onChange={this.handleTitleChange} />
+               </p>
+               <p>
+                  <label htmlFor="newItemDescription">Description:</label>
+                  <input id="newItemDescription" type="text" value={this.state.newDescription} onChange={this.handleDescriptionChange} />
+               </p>
+               <p>
+                  <label htmlFor="newItemDueDate">Due Date:</label>
+                  <input id="newItemDueDate" type="date" value={this.state.newDueDate} onChange={this.handleDueDateChange} />
+               </p>
+               <p>
+                  <label htmlFor="newItemPriority">Priority:</label>
+                  <select id="newItemPriority" value={this.state.newPriority} onChange={this.handlePriorityChange}>
+                     <option value="0">Low</option>
+                     <option value="1">Moderate</option>
+                     <option value="2">High</option>
+                  </select>
+               </p>
+               <button onClick={this.createItem}>Create</button>
+               <button onClick={this.props.onCancel}>Cancel</button>
+            </div>
+         </>
       );
    }
 }
@@ -606,15 +599,18 @@ class ProjectEditForm extends React.Component {
 
    render() {
       return (
-         <div id="projectEditForm" className="form">
-            <h3>Edit '{this.props.project.getTitle()}'</h3>
-            <p>
-               <label htmlFor="newProjectTitle">Title:</label>
-               <input id="newProjectTitle" type="text" value={this.state.newTitle} onChange={this.handleTitleChange} />
-            </p>
-            <button onClick={this.editProject}>Edit</button>
-            <button onClick={this.props.onCancel}>Cancel</button>
-         </div>
+         <>
+            <div className="back-pane"></div>
+            <div id="projectEditForm" className="form">
+               <h3>Edit '{this.props.project.getTitle()}'</h3>
+               <p>
+                  <label htmlFor="newProjectTitle">Title:</label>
+                  <input id="newProjectTitle" type="text" value={this.state.newTitle} onChange={this.handleTitleChange} />
+               </p>
+               <button onClick={this.editProject}>Edit</button>
+               <button onClick={this.props.onCancel}>Cancel</button>
+            </div>
+         </>
       );
    }
 }
@@ -624,11 +620,14 @@ class ConfirmationPrompt extends React.Component {
 
    render() {
       return (
-         <div className="confirmation-prompt">
-            <p>{this.props.prompt}</p>
-            <button onClick={this.props.onAccept}>Accept</button>
-            <button onClick={this.props.onCancel}>Cancel</button>
-         </div>
+         <>
+            <div className="back-pane" onClick={(e) => e.stopPropagation()}></div>
+            <div className="confirmation-prompt" onClick={(e) => e.stopPropagation()}>
+               <p>{this.props.prompt}</p>
+               <button onClick={this.props.onAccept}>Accept</button>
+               <button onClick={this.props.onCancel}>Cancel</button>
+            </div>
+         </>
       );
    }
 }
@@ -678,31 +677,34 @@ class ItemEditForm extends React.Component {
 
    render() {
       return (
-         <div id="itemEditForm" className="form">
-            <h3>Edit '{this.props.item.getTitle()}' Item</h3>
-            <p>
-               <label htmlFor="newItemTitle">Title:</label>
-               <input id="newItemTitle" type="text" placeholder="New TODO Item" value={this.state.newTitle} onChange={this.handleTitleChange} />
-            </p>
-            <p>
-               <label htmlFor="newItemDescription">Description:</label>
-               <input id="newItemDescription" type="text" value={this.state.newDescription} onChange={this.handleDescriptionChange} />
-            </p>
-            <p>
-               <label htmlFor="newItemDueDate">Due Date:</label>
-               <input id="newItemDueDate" type="date" value={this.state.newDueDate} onChange={this.handleDueDateChange} />
-            </p>
-            <p>
-               <label htmlFor="newItemPriority">Priority:</label>
-               <select id="newItemPriority" value={this.state.newPriority} onChange={this.handlePriorityChange}>
-                  <option value="0">Low</option>
-                  <option value="1">Moderate</option>
-                  <option value="2">High</option>
-               </select>
-            </p>
-            <button onClick={this.editItem}>Save</button>
-            <button onClick={this.props.onCancel}>Cancel</button>
-         </div>
+         <>
+            <div className="back-pane" onClick={(e) => e.stopPropagation()}></div>
+            <div id="itemEditForm" className="form" onClick={(e) => e.stopPropagation()}>
+               <h3>Edit '{this.props.item.getTitle()}' Item</h3>
+               <p>
+                  <label htmlFor="newItemTitle">Title:</label>
+                  <input id="newItemTitle" type="text" placeholder="New TODO Item" value={this.state.newTitle} onChange={this.handleTitleChange} />
+               </p>
+               <p>
+                  <label htmlFor="newItemDescription">Description:</label>
+                  <input id="newItemDescription" type="text" value={this.state.newDescription} onChange={this.handleDescriptionChange} />
+               </p>
+               <p>
+                  <label htmlFor="newItemDueDate">Due Date:</label>
+                  <input id="newItemDueDate" type="date" value={this.state.newDueDate} onChange={this.handleDueDateChange} />
+               </p>
+               <p>
+                  <label htmlFor="newItemPriority">Priority:</label>
+                  <select id="newItemPriority" value={this.state.newPriority} onChange={this.handlePriorityChange}>
+                     <option value="0">Low</option>
+                     <option value="1">Moderate</option>
+                     <option value="2">High</option>
+                  </select>
+               </p>
+               <button onClick={this.editItem}>Save</button>
+               <button onClick={this.props.onCancel}>Cancel</button>
+            </div>
+         </>
       );
    }
 }
@@ -828,22 +830,24 @@ class SettingsMenu extends React.Component {
    render() {
 
       // Whether the menu is open
-      let menuOpen = this.state.menuOpen ? {right: "0"} : {right: "-375px"};
+      let menuOpen = this.state.menuOpen ? {right: "0"} : {right: "-475px"};
 
       return (
          <>
+            {this.state.menuOpen && <div className="back-pane" onClick={this.toggleMenu}></div>}
             <span className="settings-button" onClick={this.toggleMenu}>&#9776;</span>
             <div className="settings-menu" style={menuOpen}>
                <h4>Settings <span className="settings-button" onClick={this.toggleMenu}>X</span></h4>
-               <br />
-               <label htmlFor="settingsTheme">Theme:</label>
-               <select id="settingsTheme">
-                  <option value={0}>Theme 0</option>
-               </select>
-               <br />
-               <label htmlFor="settingsCompletion">Show completion status (percentage) for projects:</label>
-               <input id="settingsCompletion" type="checkbox" checked={this.props.completionStatusVisibility} onChange={this.toggleCompletionStatusVisibility} />
-               <br />
+               <p>
+                  <label htmlFor="settingsTheme">Theme:</label>
+                  <select id="settingsTheme">
+                     <option value={0}>Theme 0</option>
+                  </select>
+               </p>
+               <p>
+                  <label htmlFor="settingsCompletion">Show completion status (percentage) for projects:</label>
+                  <input id="settingsCompletion" type="checkbox" checked={this.props.completionStatusVisibility} onChange={this.toggleCompletionStatusVisibility} />
+               </p>
                <button onClick={this.openEraseDataPrompt}>Erase all project data</button>
                {this.state.eraseDataPrompt && <ConfirmationPrompt prompt="Are you sure you want to delete all project data? (There is no undo)" onAccept={this.eraseData} onCancel={this.closeEraseDataPrompt} />}
             </div>

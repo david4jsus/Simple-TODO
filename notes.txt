@@ -1,6 +1,5 @@
 TODO (heh)
 -----
-- Finalize CSS
 - Setting: Theme selector
    - Design themes
    - CSS --> :root { --my-color: #f06d06; }
