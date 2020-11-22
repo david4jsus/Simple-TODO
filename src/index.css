@@ -1,6 +1,20 @@
+:root {
+   --bg-color-1: white;
+   --bg-color-2: #333333;
+   --text-color-1: black;
+   --text-color-2: white;
+   --card-bg-color-1: white;
+   --card-bg-color-2: #cccccc;
+   --card-text-color: black;
+   --form-bg-color: #cccccc;
+   --form-text-color: black;
+}
+
 body {
+   background-color: var(--bg-color-1);
    font-family: Verdana, Geneva, Tahoma, sans-serif;
    font-size: 1.1em;
+   color: var(--text-color-1);
 }
 
 .app-header {
@@ -9,6 +23,7 @@ body {
 
 .app-content {
    padding: 10px;
+   margin-bottom: 45px;
 }
 
 .app-footer {
@@ -17,18 +32,24 @@ body {
    bottom: 0;
    width: 100%;
    padding: 10px;
-   background-color: white;
+   background-color: var(--bg-color-1);
    text-align: center;
+}
+
+.aap-footer a:link, a:visited, a:hover, a:active {
+   color: var(--text-color-1);
 }
 
 .project-card {
    padding: 10px;
    border: 1px solid black;
    border-radius: 10px;
+   background-color: var(--card-bg-color-1);
+   color: var(--card-text-color);
 }
 
 .project-card:hover {
-   background-color: #cccccc;
+   background-color: var(--card-bg-color-2);
    cursor: pointer;
 }
 
@@ -36,11 +57,13 @@ body {
    padding: 10px;
    border: 1px solid black;
    border-radius: 10px;
+   background-color: var(--card-bg-color-1);
+   color: var(--card-text-color);
 }
 
 .item-card:hover {
-   background-color: #cccccc;
    cursor: pointer;
+   background-color: var(--card-bg-color-2);
 }
 
 .link-to-projects {
@@ -49,7 +72,7 @@ body {
 }
 
 .link-to-projects:hover {
-   background-color: #cccccc;
+   background-color: var(--form-bg-color);
    cursor: pointer;
 }
 
@@ -80,10 +103,12 @@ body {
    cursor: pointer;
    padding: 5px;
    border-radius: 10px;
+   background-color: var(--bg-color-1);
+   color: var(--text-color-1);
 }
 
 .button:hover {
-   background-color: #cccccc;
+   background-color: var(--form-bg-color);
 }
 
 .form {
@@ -95,7 +120,8 @@ body {
    top: 25%;
    border: 1px solid black;
    border-radius: 10px;
-   background-color: #cccccc;
+   background-color: var(--form-bg-color);
+   color: var(--form-text-color);
    padding: 15px;
    box-shadow: 5px 5px 16px grey;
 }
@@ -143,10 +169,10 @@ body {
    top: 25%;
    border: 1px solid black;
    border-radius: 10px;
-   background-color: #cccccc;
+   background-color: var(--bg-color-1);
    padding: 15px;
    box-shadow: 5px 5px 16px #333333;
-   color: black;
+   color: var(--text-color-1);
 }
 
 .sort-select {
@@ -161,7 +187,7 @@ body {
 }
 
 .settings-button:hover {
-   background-color: #cccccc;
+   background-color: var(--form-bg-color);
 }
 
 .settings-menu {
@@ -172,9 +198,9 @@ body {
    height: 100%;
    padding: 25px;
    border-left: 2px solid white;
-   background-color: #333333;
+   background-color: var(--bg-color-2);
    font-size: 0.75em;
-   color: white;
+   color: var(--text-color-2);
    transition: ease-in-out 0.3s;
    -moz-transition: ease-in-out 0.3s;
    -o-transition: ease-in-out 0.3s;
@@ -183,7 +209,7 @@ body {
 
 .settings-menu label {
    display: inline-block;
-   width: 75%;
+   width: 64.5%;
    font-weight: normal;
    font-size: 0.8em;
 }

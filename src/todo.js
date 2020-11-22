@@ -479,6 +479,88 @@ class AppManager {
       // Return the things to load
       return {sortMethod, theme, showCompletionStatus};
    }
+
+   // Load a specified theme
+   loadTheme (theme) {
+
+      // Load colors depending on theme selected
+      switch (theme) {
+         default:
+            break;
+         // Clean
+         case 0:
+            document.documentElement.style.setProperty ("--bg-color-1", "white");
+            document.documentElement.style.setProperty ("--bg-color-2", "#333333");
+            document.documentElement.style.setProperty ("--text-color-1", "black");
+            document.documentElement.style.setProperty ("--text-color-2", "white");
+            document.documentElement.style.setProperty ("--card-bg-color-1", "white");
+            document.documentElement.style.setProperty ("--card-bg-color-2", "#cccccc");
+            document.documentElement.style.setProperty ("--card-text", "black");
+            document.documentElement.style.setProperty ("--form-bg-color", "#cccccc");
+            document.documentElement.style.setProperty ("--form-text-color", "black");
+            break;
+         // Orchid
+         case 1:
+            document.documentElement.style.setProperty ("--bg-color-1", "#f9b4ed");
+            document.documentElement.style.setProperty ("--bg-color-2", "#334139");
+            document.documentElement.style.setProperty ("--text-color-1", "black");
+            document.documentElement.style.setProperty ("--text-color-2", "white");
+            document.documentElement.style.setProperty ("--card-bg-color-1", "#e574bc");
+            document.documentElement.style.setProperty ("--card-bg-color-2", "#c52184");
+            document.documentElement.style.setProperty ("--card-text", "black");
+            document.documentElement.style.setProperty ("--form-bg-color", "#e574bc");
+            document.documentElement.style.setProperty ("--form-text-color", "black");
+            break;
+         // Grey Alabaster
+         case 2:
+            document.documentElement.style.setProperty ("--bg-color-1", "#8a817C");
+            document.documentElement.style.setProperty ("--bg-color-2", "#463f3a");
+            document.documentElement.style.setProperty ("--text-color-1", "white");
+            document.documentElement.style.setProperty ("--text-color-2", "white");
+            document.documentElement.style.setProperty ("--card-bg-color-1", "#bcb8b1");
+            document.documentElement.style.setProperty ("--card-bg-color-2", "#e0afa0");
+            document.documentElement.style.setProperty ("--card-text", "black");
+            document.documentElement.style.setProperty ("--form-bg-color", "#e0afa0");
+            document.documentElement.style.setProperty ("--form-text-color", "black");
+            break;
+         // Blue Orange
+         case 3:
+            document.documentElement.style.setProperty ("--bg-color-1", "#283845");
+            document.documentElement.style.setProperty ("--bg-color-2", "#f29559");
+            document.documentElement.style.setProperty ("--text-color-1", "white");
+            document.documentElement.style.setProperty ("--text-color-2", "black");
+            document.documentElement.style.setProperty ("--card-bg-color-1", "#f29559");
+            document.documentElement.style.setProperty ("--card-bg-color-2", "#f2d492");
+            document.documentElement.style.setProperty ("--card-text", "black");
+            document.documentElement.style.setProperty ("--form-bg-color", "#f2d492");
+            document.documentElement.style.setProperty ("--form-text-color", "black");
+            break;
+         // Dodger
+         case 4:
+            document.documentElement.style.setProperty ("--bg-color-1", "#4bb3fd");
+            document.documentElement.style.setProperty ("--bg-color-2", "#00487c");
+            document.documentElement.style.setProperty ("--text-color-1", "white");
+            document.documentElement.style.setProperty ("--text-color-2", "white");
+            document.documentElement.style.setProperty ("--card-bg-color-1", "#027bce");
+            document.documentElement.style.setProperty ("--card-bg-color-2", "#3e6680");
+            document.documentElement.style.setProperty ("--card-text-color", "white");
+            document.documentElement.style.setProperty ("--form-bg-color", "#027bce");
+            document.documentElement.style.setProperty ("--form-text-color", "white");
+            break;
+         // Rainy
+         case 5:
+            document.documentElement.style.setProperty ("--bg-color-1", "#a5ccd1");
+            document.documentElement.style.setProperty ("--bg-color-2", "#949ba0");
+            document.documentElement.style.setProperty ("--text-color-1", "black");
+            document.documentElement.style.setProperty ("--text-color-2", "white");
+            document.documentElement.style.setProperty ("--card-bg-color-1", "#bcd4de");
+            document.documentElement.style.setProperty ("--card-bg-color-2", "#9dacb2");
+            document.documentElement.style.setProperty ("--card-text-color", "black");
+            document.documentElement.style.setProperty ("--form-bg-color", "#bcd4de");
+            document.documentElement.style.setProperty ("--form-text-color", "black");
+            break;
+      }
+   }
 }
 
 export {Item, Project, AppManager};

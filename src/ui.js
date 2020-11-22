@@ -21,6 +21,7 @@ class App extends React.Component {
       };
       this.updateView = this.updateView.bind (this);
       this.enterMainView = this.enterMainView.bind (this);
+      this.changeTheme = this.changeTheme.bind (this);
       this.saveAppData = this.saveAppData.bind (this);
       this.updateCompletionStatusVisibility = this.updateCompletionStatusVisibility.bind (this);
       this.updateSortMethod = this.updateSortMethod.bind (this);
@@ -33,7 +34,7 @@ class App extends React.Component {
          theme: settings.theme === null ? 0 : settings.theme,
          showCompletionStatus: settings.showCompletionStatus === null ? false : settings.showCompletionStatus
       });
-      console.log (settings);
+      appManager.loadTheme (settings.theme);
    }
 
    updateView (view) {
@@ -42,6 +43,12 @@ class App extends React.Component {
 
    enterMainView() {
       this.updateView ("mainView");
+   }
+
+   changeTheme (newTheme) {
+      this.setState ({theme: newTheme});
+      appManager.loadTheme (newTheme);
+      this.saveAppData ({theme: newTheme});
    }
 
    saveAppData (items) {
@@ -93,7 +100,7 @@ class App extends React.Component {
    render () {
       return (
          <>
-            <AppHeader toMainView={this.enterMainView} completionStatusVisibility={this.state.showCompletionStatus} updateCompletionStatusVisibility={this.updateCompletionStatusVisibility} />
+            <AppHeader toMainView={this.enterMainView} completionStatusVisibility={this.state.showCompletionStatus} updateCompletionStatusVisibility={this.updateCompletionStatusVisibility} changeTheme={this.changeTheme} theme={this.state.theme} />
             <AppContent view={this.state.view} updateView={this.updateView} completionStatusVisibility={this.state.showCompletionStatus} save={this.saveAppData} updateCompletionStatusVisibility={this.updateCompletionStatusVisibility} sortMethod={this.state.sortMethod} updateSortMethod={this.updateSortMethod} />
             <AppFooter />
          </>
@@ -111,7 +118,7 @@ class AppHeader extends React.Component {
    render() {
       return(
          <div className="app-header">
-            <h1>Simple TODO<SettingsMenu completionStatusVisibility={this.props.completionStatusVisibility} updateCompletionStatusVisibility={this.props.updateCompletionStatusVisibility} refresh={this.props.toMainView} /></h1>
+            <h1>Simple TODO<SettingsMenu theme={this.props.theme} changeTheme={this.props.changeTheme} completionStatusVisibility={this.props.completionStatusVisibility} updateCompletionStatusVisibility={this.props.updateCompletionStatusVisibility} refresh={this.props.toMainView} /></h1>
          </div>
       );
    }
@@ -798,6 +805,7 @@ class SettingsMenu extends React.Component {
          eraseDataPrompt: false
       };
       this.toggleMenu = this.toggleMenu.bind (this);
+      this.changeTheme = this.changeTheme.bind (this);
       this.toggleCompletionStatusVisibility = this.toggleCompletionStatusVisibility.bind (this);
       this.openEraseDataPrompt = this.openEraseDataPrompt.bind (this);
       this.closeEraseDataPrompt = this.closeEraseDataPrompt.bind (this);
@@ -806,6 +814,10 @@ class SettingsMenu extends React.Component {
 
    toggleMenu() {
       this.setState ({menuOpen: !this.state.menuOpen});
+   }
+
+   changeTheme (evt) {
+      this.props.changeTheme (parseInt(evt.target.value));
    }
 
    toggleCompletionStatusVisibility() {
@@ -840,8 +852,13 @@ class SettingsMenu extends React.Component {
                <h4>Settings <span className="settings-button" onClick={this.toggleMenu}>X</span></h4>
                <p>
                   <label htmlFor="settingsTheme">Theme:</label>
-                  <select id="settingsTheme">
-                     <option value={0}>Theme 0</option>
+                  <select id="settingsTheme" onChange={this.changeTheme} value={this.props.theme}>
+                     <option value={0}>Clean</option>
+                     <option value={1}>Orchid</option>
+                     <option value={2}>Grey Alabaster</option>
+                     <option value={3}>Blue Orange</option>
+                     <option value={4}>Dodger</option>
+                     <option value={5}>Rainy</option>
                   </select>
                </p>
                <p>

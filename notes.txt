@@ -1,10 +1,5 @@
 TODO (heh)
 -----
-- Setting: Theme selector
-   - Design themes
-   - CSS --> :root { --my-color: #f06d06; }
-   - JS  --> document.documentElement.style.setProperty("--my-color", this.value);
-   - Save/Load
 - More testing (all the testing)
 - ? (Move on if sanity says we're done with this project)
 - Rewrite README.MD
