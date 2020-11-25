@@ -842,7 +842,7 @@ class SettingsMenu extends React.Component {
    render() {
 
       // Whether the menu is open
-      let menuOpen = this.state.menuOpen ? {right: "0"} : {right: "-475px"};
+      let menuOpen = this.state.menuOpen ? {right: "0"} : {right: "-480px"};
 
       return (
          <>
