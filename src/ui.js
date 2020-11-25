@@ -2,11 +2,10 @@
 import React from 'react';
 
 // Import our TODO API thingy
-import {Item, Project, AppManager} from "./todo";
+import {AppManager} from "./todo";
 
-//==== TEST STUFF ====//
+// Use the functionality from custom TODO library
 var appManager = new AppManager();
-//====================//
 
 // Renders the web app (back to root node)
 class App extends React.Component {

@@ -563,4 +563,4 @@ class AppManager {
    }
 }
 
-export {Item, Project, AppManager};
+export {AppManager};
