@@ -234,6 +234,9 @@ class AppManager {
       // Create a unique ID for the new project
       let newID = id === undefined ? Date.now() : id;
 
+      // Default values (in case of empty string or no option selected)
+      newTitle = newTitle === "" ? "New Project" : newTitle;
+
       // Create project
       let newProject = new Project (newTitle, newID);
 
@@ -297,6 +300,19 @@ class AppManager {
 
       // Create a unique ID for the new item (copy the given one, if specified)
       let newID = id === undefined ? Date.now() : id;
+
+      // Default values (in case of empty string or no option selected)
+      newTitle = newTitle === "" ? "New Item" : newTitle;
+      newDescription = newDescription === "" ? "This is a new item" : newDescription;
+      if (newDueDate === "") {
+         let date = new Date();
+         if (date.getMonth() < 10) {
+            newDueDate = date.getFullYear() + "-0" + (date.getMonth() + 1) + "-" + date.getDate();
+         } else {
+            newDueDate = date.getFullYear() + "-" + (date.getMonth() + 1) + "-" + date.getDate();
+         }
+      }
+      newPriority = newPriority === "" ? "0" : newPriority;
 
       // Create new item
       let newItem = new Item (projectID, newTitle, newDescription, newDueDate, newPriority, newID);

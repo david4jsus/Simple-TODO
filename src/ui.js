@@ -109,10 +109,6 @@ class App extends React.Component {
 
 // Web app title and settings
 class AppHeader extends React.Component {
-   /* TODO
-      - Implement settings
-      - Finalize CSS
-   */
 
    render() {
       return(
@@ -125,9 +121,6 @@ class AppHeader extends React.Component {
 
 // Body of the web app
 class AppContent extends React.Component {
-   /* TODO
-      - Work on the other of components that will be invoked from here
-   */
 
    constructor (props) {
       super (props);
@@ -220,9 +213,6 @@ class MainView extends React.Component {
 
 // List of items in a specific project
 class ProjectView extends React.Component {
-   /* TODO
-      - Finalize CSS
-   */
 
    /*
       -- Floating menu --
